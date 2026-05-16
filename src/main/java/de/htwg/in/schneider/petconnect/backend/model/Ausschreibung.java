@@ -1,11 +1,22 @@
 package de.htwg.in.schneider.petconnect.backend.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
+@Entity
 public class Ausschreibung {
-    private long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String petName;
     private int petAge;
     private String city;
     private String postalCode;
+    @Enumerated(EnumType.STRING)
     private AnimalType animalType;
     private String description;
     private String dateFrom;
@@ -15,11 +26,11 @@ public class Ausschreibung {
 
     // Getters and setters
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -121,6 +132,20 @@ public class Ausschreibung {
                 + ", imageUrl='" + imageUrl + '\''
                 + '}';
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Ausschreibung that = (Ausschreibung) o;
+        return id!= null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 
 }

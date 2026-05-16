@@ -1,0 +1,72 @@
+package de.htwg.in.schneider.petconnect.backend.config;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
+import de.htwg.in.schneider.petconnect.backend.model.AnimalType;
+import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
+
+import java.util.Arrays;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Configuration
+public class DataLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
+
+    @Bean
+    public CommandLineRunner loadData(AusschreibungRepository repository) {
+        return args -> {
+            if (repository.count() == 0) { // Check if the repository is empty
+                LOGGER.info("Database is empty. Loading initial data...");
+                loadInitialData(repository);
+            } else {
+                LOGGER.info("Database already contains data. Skipping data loading.");
+            }
+        };
+    }
+
+    private void loadInitialData(AusschreibungRepository repository) {
+        Ausschreibung a1 = new Ausschreibung();
+
+        a1.setPetName("Bello");
+        a1.setPetAge(5);
+        a1.setCity("Konstanz");
+        a1.setPostalCode("78462");
+        a1.setAnimalType(AnimalType.DOG);
+        a1.setDescription("Looking for someone to take care of Bello during the weekend.");
+        a1.setDateFrom("2026-08-01");
+        a1.setDateTo("2026-08-04");
+        a1.setCompensation("Exchange");
+        a1.setImageUrl( "https://images.unsplash.com/photo-1552053831-71594a27632d");
+
+        Ausschreibung a2 = new Ausschreibung();
+        a2.setPetName("Milo");
+        a2.setPetAge(3);
+        a2.setCity("Singen");
+        a2.setPostalCode("78224");
+        a2.setAnimalType(AnimalType.CAT);
+        a2.setDescription("Need a cat sitter during vacation." );
+        a2.setDateFrom("2026-07-10");
+        a2.setDateTo("2026-07-20");
+        a2.setCompensation("Payment");
+        a2.setImageUrl("https://images.unsplash.com/photo-1519052537078-e6302a4968d4");
+
+        Ausschreibung a3 = new Ausschreibung();
+        a3.setPetName("Luna");
+        a3.setPetAge(2);
+        a3.setCity("Radolfzell");
+        a3.setPostalCode("78315");
+        a3.setAnimalType(AnimalType.RABBIT);
+        a3.setDescription("Looking for a loving rabbit sitter.");
+        a3.setDateFrom("2026-09-05");
+        a3.setDateTo("2026-09-12");
+        a3.setCompensation("Payment");
+        a3.setImageUrl("https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308");
+        repository.saveAll(Arrays.asList(a1, a2, a3));
+        LOGGER.info("Initial data loaded successfully.");
+    }
+}
