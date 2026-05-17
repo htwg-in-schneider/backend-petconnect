@@ -1,17 +1,25 @@
 info:
   name: createAusschreibung
   type: http
-  seq: 1
+  seq: 3
 
 http:
   method: POST
-  url: http://localhost:8081/api/product
+  url: http://localhost:8081/api/ausschreibungen
   body:
     type: json
     data: |-
       {
-        "title": "Bratsche",
-        "description": "macht bratsch"
+         "petName": "Luna",
+        "petAge": 4,
+        "city": "Konstanz",
+        "postalCode": "78462",
+        "animalType": "CAT",
+        "description": "Looking for cat sitting.",
+        "dateFrom": "2026-08-01",
+        "dateTo": "2026-08-05",
+        "compensation": "Payment",
+        "imageUrl": "https://images.unsplash.com/photo-1519052537078-e6302a4968d4"
       }
   auth: inherit
 
