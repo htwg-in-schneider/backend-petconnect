@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("/api/ausschreibungen")
 public class AusschreibungController {
@@ -27,6 +28,7 @@ public class AusschreibungController {
     public List<Ausschreibung> getAusschreibungen() {
         return ausschreibungRepository.findAll();
     }
+
     
     //CREATE
     @PostMapping
