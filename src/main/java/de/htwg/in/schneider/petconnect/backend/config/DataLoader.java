@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Configuration;
 import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.model.AnimalType;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
+import de.htwg.in.schneider.petconnect.backend.repository.ReviewRepository;
+import de.htwg.in.schneider.petconnect.backend.model.Review;
 
 import java.util.Arrays;
 import org.slf4j.Logger;
@@ -18,18 +20,18 @@ public class DataLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
 
     @Bean
-    public CommandLineRunner loadData(AusschreibungRepository repository) {
+    public CommandLineRunner loadData(AusschreibungRepository repository, ReviewRepository reviewRepository) {
         return args -> {
             if (repository.count() == 0) { // Check if the repository is empty
                 LOGGER.info("Database is empty. Loading initial data...");
-                loadInitialData(repository);
+                loadInitialData(repository, reviewRepository);
             } else {
                 LOGGER.info("Database already contains data. Skipping data loading.");
             }
         };
     }
 
-    private void loadInitialData(AusschreibungRepository repository) {
+    private void loadInitialData(AusschreibungRepository repository, ReviewRepository reviewRepository) {
         Ausschreibung a1 = new Ausschreibung();
 
         a1.setPetName("Bello");
@@ -67,6 +69,30 @@ public class DataLoader {
         a3.setCompensation("Payment");
         a3.setImageUrl("https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308");
         repository.saveAll(Arrays.asList(a1, a2, a3));
+        
+
+        //Add reviews
+        Review r1 = new Review();
+        r1.setAusschreibung(a1);
+        r1.setStars(5);
+        r1.setText("Sehr liebevoller Umgang mit Bello, gerne wieder!");
+        r1.setUserName("Anna");
+
+        Review r2 = new Review();
+        r2.setAusschreibung(a1);
+        r2.setStars(4);
+        r2.setText("Bello war glücklich, aber es gab ein kleines Missverständnis bei der Fütterung.");
+        r2.setUserName("Max");
+
+        Review r3 = new Review();
+        r3.setAusschreibung(a2);
+        r3.setStars(5);
+        r3.setText("Milo wurde bestens versorgt, sehr empfehlenswert!");
+        r3.setUserName("Sophie");
+        
+        reviewRepository.saveAll(Arrays.asList(r1, r2, r3));
+
         LOGGER.info("Initial data loaded successfully.");
+
     }
 }

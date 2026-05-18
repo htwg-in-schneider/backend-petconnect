@@ -7,10 +7,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
+
+import java.util.List;
+
 @Entity
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Ausschreibung {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+
     private Long id;
     private String petName;
     private int petAge;
@@ -24,8 +34,11 @@ public class Ausschreibung {
     private String compensation;
     private String imageUrl;
 
-    // Getters and setters
+    @OneToMany(mappedBy = "ausschreibung", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<Review> reviews;
 
+    // Getters and setters
     public Long getId() {
         return id;
     }
@@ -114,8 +127,25 @@ public class Ausschreibung {
         this.imageUrl = imageUrl;
     }
 
-    @Override
+    public List<Review> getReviews() {
+        return reviews;
+    }
 
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+        review.setAusschreibung(this);
+    }
+
+    public void removeReview(Review review) {
+        reviews.remove(review);
+        review.setAusschreibung(null);
+    }
+
+    @Override
     public String toString() {
 
         return "Ausschreibung{"

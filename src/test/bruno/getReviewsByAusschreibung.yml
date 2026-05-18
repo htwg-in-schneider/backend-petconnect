@@ -1,11 +1,11 @@
 info:
-  name: deleteAusschreibung
+  name: getReviewsByAusschreibung
   type: http
-  seq: 6
+  seq: 8
 
 http:
-  method: DELETE
-  url: http://localhost:8081/api/ausschreibungen/1
+  method: GET
+  url: http://localhost:8081/api/review/ausschreibung/1
   auth: inherit
 
 settings:
