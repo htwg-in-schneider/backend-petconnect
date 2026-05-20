@@ -13,6 +13,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 @Entity
@@ -20,17 +23,22 @@ import java.util.List;
 public class Ausschreibung {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
     private Long id;
+    @NotBlank
     private String petName;
     private int petAge;
+    @NotBlank
     private String city;
     private String postalCode;
     @Enumerated(EnumType.STRING)
+    @NotNull
     private AnimalType animalType;
     private String description;
+    @NotBlank
     private String dateFrom;
+    @NotBlank
     private String dateTo;
+    @NotBlank
     private String compensation;
     private String imageUrl;
 

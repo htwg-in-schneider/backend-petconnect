@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 import java.util.Optional;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/api/ausschreibungen")
@@ -32,7 +34,7 @@ public class AusschreibungController {
     
     //CREATE
     @PostMapping
-    public Ausschreibung createAusschreibung(@RequestBody Ausschreibung ausschreibung) {
+    public Ausschreibung createAusschreibung(@Valid @RequestBody Ausschreibung ausschreibung) {
         if (ausschreibung.getId() != null) {
             ausschreibung.setId(null);
             LOG.warn("Attempted to create an ausschreibung with an existing ID. ID has been set to null to create a new ausschreibung.");
@@ -44,7 +46,7 @@ public class AusschreibungController {
 
     //UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Ausschreibung> updateAusschreibung(@PathVariable Long id, @RequestBody Ausschreibung ausschreibungDetails) {
+    public ResponseEntity<Ausschreibung> updateAusschreibung(@PathVariable Long id,@Valid @RequestBody Ausschreibung ausschreibungDetails) {
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.notFound().build();

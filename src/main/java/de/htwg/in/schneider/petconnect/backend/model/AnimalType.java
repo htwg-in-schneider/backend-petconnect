@@ -4,7 +4,7 @@ public enum AnimalType {
 
     DOG("Hund"),
     CAT("Katze"),
-    RABBIT("Hase Kaninchen"),
+    RABBIT("Hase/Kaninchen"),
     BIRD("Vogel");
 
     private final String displayName;
