@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -35,9 +36,9 @@ public class Ausschreibung {
     private AnimalType animalType;
     private String description;
     @NotBlank
-    private String dateFrom;
+    private LocalDate dateFrom;
     @NotBlank
-    private String dateTo;
+    private LocalDate dateTo;
     @NotBlank
     private String compensation;
     private String imageUrl;
@@ -103,19 +104,19 @@ public class Ausschreibung {
         this.description = description;
     }
 
-    public String getDateFrom() {
+    public LocalDate getDateFrom() {
         return dateFrom;
     }
 
-    public void setDateFrom(String dateFrom) {
+    public void setDateFrom(LocalDate dateFrom) {
         this.dateFrom = dateFrom;
     }
 
-    public String getDateTo() {
+    public LocalDate getDateTo() {
         return dateTo;
     }
 
-    public void setDateTo(String dateTo) {
+    public void setDateTo(LocalDate dateTo) {
         this.dateTo = dateTo;
     }
 

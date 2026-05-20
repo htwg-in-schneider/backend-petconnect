@@ -9,6 +9,7 @@ import de.htwg.in.schneider.petconnect.backend.model.AnimalType;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.ReviewRepository;
 import de.htwg.in.schneider.petconnect.backend.model.Review;
+import java.time.LocalDate;
 
 import java.util.Arrays;
 import org.slf4j.Logger;
@@ -40,9 +41,9 @@ public class DataLoader {
         a1.setPostalCode("78462");
         a1.setAnimalType(AnimalType.DOG);
         a1.setDescription("Looking for someone to take care of Bello during the weekend.");
-        a1.setDateFrom("2026-08-01");
-        a1.setDateTo("2026-08-04");
-        a1.setCompensation("Exchange");
+        a1.setDateFrom(LocalDate.of(2026, 8, 1));
+        a1.setDateTo(LocalDate.of(2026, 8, 4));
+        a1.setCompensation("Tausch");
         a1.setImageUrl( "https://images.unsplash.com/photo-1552053831-71594a27632d");
 
         Ausschreibung a2 = new Ausschreibung();
@@ -52,9 +53,9 @@ public class DataLoader {
         a2.setPostalCode("78224");
         a2.setAnimalType(AnimalType.CAT);
         a2.setDescription("Need a cat sitter during vacation." );
-        a2.setDateFrom("2026-07-10");
-        a2.setDateTo("2026-07-20");
-        a2.setCompensation("Payment");
+        a2.setDateFrom(LocalDate.of(2026, 7, 10));
+        a2.setDateTo(LocalDate.of(2026, 7, 20));
+        a2.setCompensation("Bezahlung");
         a2.setImageUrl("https://images.unsplash.com/photo-1519052537078-e6302a4968d4");
 
         Ausschreibung a3 = new Ausschreibung();
@@ -64,9 +65,9 @@ public class DataLoader {
         a3.setPostalCode("78315");
         a3.setAnimalType(AnimalType.RABBIT);
         a3.setDescription("Looking for a loving rabbit sitter.");
-        a3.setDateFrom("2026-09-05");
-        a3.setDateTo("2026-09-12");
-        a3.setCompensation("Payment");
+        a3.setDateFrom(LocalDate.of(2026, 9, 5));
+        a3.setDateTo(LocalDate.of(2026, 9, 12));
+        a3.setCompensation("Bezahlung");
         a3.setImageUrl("https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308");
         repository.saveAll(Arrays.asList(a1, a2, a3));
         

@@ -34,14 +34,19 @@ public class AusschreibungController {
     
     //CREATE
     @PostMapping
-    public Ausschreibung createAusschreibung(@Valid @RequestBody Ausschreibung ausschreibung) {
+    public ResponseEntity<Ausschreibung> createAusschreibung(@Valid @RequestBody Ausschreibung ausschreibung) {
         if (ausschreibung.getId() != null) {
             ausschreibung.setId(null);
             LOG.warn("Attempted to create an ausschreibung with an existing ID. ID has been set to null to create a new ausschreibung.");
         }
+        if (ausschreibung.getDateFrom().isAfter(ausschreibung.getDateTo())) {
+        return ResponseEntity
+            .badRequest()
+            .build();
+    }
         Ausschreibung newAusschreibung = ausschreibungRepository.save(ausschreibung);
         LOG.info("Created new ausschreibung with id " + newAusschreibung.getId());
-        return newAusschreibung;
+        return ResponseEntity.ok(newAusschreibung);
     }
 
     //UPDATE
@@ -51,7 +56,13 @@ public class AusschreibungController {
         if (!opt.isPresent()) {
             return ResponseEntity.notFound().build();
         }
+        
         Ausschreibung ausschreibung = opt.get();
+        if (ausschreibung.getDateFrom().isAfter(ausschreibung.getDateTo())) {
+        return ResponseEntity
+        .badRequest()
+        .build();
+    }
         ausschreibung.setPetName(ausschreibungDetails.getPetName());
         ausschreibung.setPetAge(ausschreibungDetails.getPetAge());
         ausschreibung.setCity(ausschreibungDetails.getCity());
