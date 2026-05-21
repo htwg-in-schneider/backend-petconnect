@@ -35,9 +35,9 @@ public class Ausschreibung {
     @NotNull
     private AnimalType animalType;
     private String description;
-    @NotBlank
+    @NotNull
     private LocalDate dateFrom;
-    @NotBlank
+    @NotNull
     private LocalDate dateTo;
     @NotBlank
     private String compensation;
