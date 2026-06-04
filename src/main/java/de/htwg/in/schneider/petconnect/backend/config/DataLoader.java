@@ -9,11 +9,15 @@ import de.htwg.in.schneider.petconnect.backend.model.AnimalType;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.ReviewRepository;
 import de.htwg.in.schneider.petconnect.backend.model.Review;
+import de.htwg.in.schneider.petconnect.backend.model.User;
+import de.htwg.in.schneider.petconnect.backend.model.Role;
+import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
 import java.time.LocalDate;
 
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Optional;
 
 @Configuration
 public class DataLoader {
@@ -21,17 +25,79 @@ public class DataLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoader.class);
 
     @Bean
-    public CommandLineRunner loadData(AusschreibungRepository repository, ReviewRepository reviewRepository) {
+    public CommandLineRunner loadData(UserRepository userRepository, AusschreibungRepository repository, ReviewRepository reviewRepository) {
         return args -> {
-            if (repository.count() == 0) { // Check if the repository is empty
-                LOGGER.info("Database is empty. Loading initial data...");
-                loadInitialData(repository, reviewRepository);
+            loadInitialUsers(userRepository);
+
+        if (repository.count() == 0) {
+            LOGGER.info("Database is empty. Loading initial data...");
+            loadInitialData(repository, reviewRepository);
             } else {
                 LOGGER.info("Database already contains data. Skipping data loading.");
             }
         };
     }
 
+    private void loadInitialUsers(UserRepository userRepository) {
+
+    upsertUser(
+            userRepository,
+            "Admin",
+            "alicemuster+admin@petconnect.de",
+            "auth0|6a2176926d4bd56b9f690a2d",
+            Role.ADMIN);
+
+    upsertUser(
+            userRepository,
+            "Alice Tierbesitzer",
+            "alicemuster+besitzer@petconnect.de",
+            "auth0|6a217774f78e54ce72cc2d50",
+            Role.TIERBESITZER);
+
+    upsertUser(
+            userRepository,
+            "Alice Tiersucher",
+            "alicemuster+sucher@petconnect.de",
+            "auth0|6a2177b1009fd25f88a7e9bc",
+            Role.TIERSUCHER);
+}
+
+private void upsertUser(
+        UserRepository userRepository,
+        String name,
+        String email,
+        String oauthId,
+        Role role) {
+
+    Optional<User> existing = userRepository.findByEmail(email);
+
+    if (existing.isPresent()) {
+
+        User user = existing.get();
+
+        user.setName(name);
+        user.setEmail(email);
+        user.setOauthId(oauthId);
+        user.setRole(role);
+
+        userRepository.save(user);
+
+        LOGGER.info("Updated user {}", email);
+
+    } else {
+
+        User user = new User();
+
+        user.setName(name);
+        user.setEmail(email);
+        user.setOauthId(oauthId);
+        user.setRole(role);
+
+        userRepository.save(user);
+
+        LOGGER.info("Created user {}", email);
+    }
+}
     private void loadInitialData(AusschreibungRepository repository, ReviewRepository reviewRepository) {
         Ausschreibung a1 = new Ausschreibung();
 
