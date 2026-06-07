@@ -31,7 +31,7 @@ public class DataLoader {
 
         if (repository.count() == 0) {
             LOGGER.info("Database is empty. Loading initial data...");
-            loadInitialData(repository, reviewRepository);
+            loadInitialData(userRepository, repository, reviewRepository);
             } else {
                 LOGGER.info("Database already contains data. Skipping data loading.");
             }
@@ -98,9 +98,13 @@ private void upsertUser(
         LOGGER.info("Created user {}", email);
     }
 }
-    private void loadInitialData(AusschreibungRepository repository, ReviewRepository reviewRepository) {
+    private void loadInitialData(UserRepository userRepository, AusschreibungRepository repository, ReviewRepository reviewRepository) {
+        User tierbesitzer = userRepository
+        .findByEmail("alicemuster+besitzer@petconnect.de")
+        .orElseThrow();
         Ausschreibung a1 = new Ausschreibung();
 
+        a1.setOwner(tierbesitzer);
         a1.setPetName("Bello");
         a1.setPetAge(5);
         a1.setCity("Konstanz");
@@ -113,6 +117,7 @@ private void upsertUser(
         a1.setImageUrl( "https://images.unsplash.com/photo-1552053831-71594a27632d");
 
         Ausschreibung a2 = new Ausschreibung();
+        a2.setOwner(tierbesitzer);
         a2.setPetName("Milo");
         a2.setPetAge(3);
         a2.setCity("Singen");
@@ -125,6 +130,7 @@ private void upsertUser(
         a2.setImageUrl("https://images.unsplash.com/photo-1519052537078-e6302a4968d4");
 
         Ausschreibung a3 = new Ausschreibung();
+        a3.setOwner(tierbesitzer);
         a3.setPetName("Luna");
         a3.setPetAge(2);
         a3.setCity("Radolfzell");

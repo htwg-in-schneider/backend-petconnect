@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
@@ -46,6 +47,9 @@ public class Ausschreibung {
     @OneToMany(mappedBy = "ausschreibung", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Review> reviews;
+
+    @ManyToOne
+    private User owner;
 
     // Getters and setters
     public Long getId() {
@@ -152,6 +156,14 @@ public class Ausschreibung {
     public void removeReview(Review review) {
         reviews.remove(review);
         review.setAusschreibung(null);
+    }
+
+     public User getOwner() {
+        return owner;
+    }
+
+    public void setOwner(User owner) {
+    this.owner = owner;
     }
 
     @Override

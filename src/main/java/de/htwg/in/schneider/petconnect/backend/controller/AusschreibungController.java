@@ -5,8 +5,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+
 import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
+import de.htwg.in.schneider.petconnect.backend.model.Role;
+import de.htwg.in.schneider.petconnect.backend.model.User;
+import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
 
 import org.springframework.http.ResponseEntity;
 import java.util.List;
@@ -24,6 +30,16 @@ public class AusschreibungController {
     @Autowired
     private AusschreibungRepository ausschreibungRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
+    private boolean userFromJwtIsTierbesitzer(Jwt jwt) {
+    if (jwt == null || jwt.getSubject() == null) {
+        return false;
+    }
+    Optional<User> user = userRepository.findByOauthId(jwt.getSubject());
+    return user.isPresent()&& user.get().getRole() == Role.TIERBESITZER;
+    }
 
     // GET ALL
     @GetMapping
@@ -34,7 +50,10 @@ public class AusschreibungController {
     
     //CREATE
     @PostMapping
-    public ResponseEntity<Ausschreibung> createAusschreibung(@Valid @RequestBody Ausschreibung ausschreibung) {
+    public ResponseEntity<Ausschreibung> createAusschreibung(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody Ausschreibung ausschreibung) {
+        if (!userFromJwtIsTierbesitzer(jwt)) {
+            return ResponseEntity.status(403).build();
+        }
         if (ausschreibung.getId() != null) {
             ausschreibung.setId(null);
             LOG.warn("Attempted to create an ausschreibung with an existing ID. ID has been set to null to create a new ausschreibung.");
@@ -44,6 +63,8 @@ public class AusschreibungController {
             .badRequest()
             .build();
     }
+        User owner =userRepository.findByOauthId(jwt.getSubject()).get();
+        ausschreibung.setOwner(owner);
         Ausschreibung newAusschreibung = ausschreibungRepository.save(ausschreibung);
         LOG.info("Created new ausschreibung with id " + newAusschreibung.getId());
         return ResponseEntity.ok(newAusschreibung);
@@ -51,7 +72,10 @@ public class AusschreibungController {
 
     //UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Ausschreibung> updateAusschreibung(@PathVariable Long id,@Valid @RequestBody Ausschreibung ausschreibungDetails) {
+    public ResponseEntity<Ausschreibung> updateAusschreibung(@AuthenticationPrincipal Jwt jwt,@PathVariable Long id,@Valid @RequestBody Ausschreibung ausschreibungDetails) {
+        if (!userFromJwtIsTierbesitzer(jwt)) {
+            return ResponseEntity.status(403).build();
+        }
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -80,7 +104,10 @@ public class AusschreibungController {
 
     //DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteAusschreibung(@PathVariable Long id) {
+    public ResponseEntity<Object> deleteAusschreibung(@AuthenticationPrincipal Jwt jwt,@PathVariable Long id) {
+        if (!userFromJwtIsTierbesitzer(jwt)) {
+            return ResponseEntity.status(403).build();
+        }
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
         if (!opt.isPresent()) {
             return ResponseEntity.notFound().build();
@@ -100,4 +127,14 @@ public class AusschreibungController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/meine")
+public ResponseEntity<List<Ausschreibung>> getMeineAusschreibungen(@AuthenticationPrincipal Jwt jwt) {
+    if (!userFromJwtIsTierbesitzer(jwt)) {
+        return ResponseEntity.status(403).build();
+    }
+            
+    User owner =userRepository.findByOauthId(jwt.getSubject()).get();
+
+    return ResponseEntity.ok(ausschreibungRepository.findByOwner(owner));
+}
 }

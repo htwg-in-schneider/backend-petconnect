@@ -1,5 +1,7 @@
 package de.htwg.in.schneider.petconnect.backend.model;
 import jakarta.persistence.*;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "app_user")
@@ -17,6 +19,10 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "owner")
+    @JsonIgnore
+    private List<Ausschreibung> ausschreibungen;
 
     public Long getId() {
         return id;
@@ -48,5 +54,10 @@ public class User {
     public void setRole(Role role) {
         this.role = role;
     }
-    
+    public List<Ausschreibung> getAusschreibungen() {
+    return ausschreibungen;
+    }
+    public void setAusschreibungen(List<Ausschreibung> ausschreibungen) {
+    this.ausschreibungen = ausschreibungen;
+    }
 }
