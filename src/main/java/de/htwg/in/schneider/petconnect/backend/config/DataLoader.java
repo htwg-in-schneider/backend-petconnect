@@ -42,21 +42,27 @@ public class DataLoader {
 
     upsertUser(
             userRepository,
+            "Jana",
             "Admin",
+            "12345 Adminstadt",
             "alicemuster+admin@petconnect.de",
             "auth0|6a2176926d4bd56b9f690a2d",
             Role.ADMIN);
 
     upsertUser(
             userRepository,
-            "Alice Tierbesitzer",
+            "Alice",
+            "Muster",
+            "12345 Musterstadt",
             "alicemuster+besitzer@petconnect.de",
             "auth0|6a217774f78e54ce72cc2d50",
             Role.TIERBESITZER);
 
     upsertUser(
             userRepository,
-            "Alice Tiersucher",
+            "Alice",
+            "Klein",
+            "12345 Kleinstadt",
             "alicemuster+sucher@petconnect.de",
             "auth0|6a2177b1009fd25f88a7e9bc",
             Role.TIERSUCHER);
@@ -64,7 +70,9 @@ public class DataLoader {
 
 private void upsertUser(
         UserRepository userRepository,
-        String name,
+        String firstName,
+        String lastName,
+        String address,
         String email,
         String oauthId,
         Role role) {
@@ -75,7 +83,9 @@ private void upsertUser(
 
         User user = existing.get();
 
-        user.setName(name);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAddress(address);
         user.setEmail(email);
         user.setOauthId(oauthId);
         user.setRole(role);
@@ -88,7 +98,9 @@ private void upsertUser(
 
         User user = new User();
 
-        user.setName(name);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setAddress(address);
         user.setEmail(email);
         user.setOauthId(oauthId);
         user.setRole(role);

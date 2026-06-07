@@ -1,6 +1,8 @@
 package de.htwg.in.schneider.petconnect.backend.controller;
 
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -27,4 +29,17 @@ public class ProfileController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+    @PutMapping
+    public ResponseEntity<User> updateProfile(@AuthenticationPrincipal Jwt jwt,@RequestBody User updatedUser) {
+    Optional<User> userOpt =userRepository.findByOauthId(jwt.getSubject());
+    if (!userOpt.isPresent()) {
+        return ResponseEntity.notFound().build();
+    }
+    User user = userOpt.get();
+    user.setFirstName(updatedUser.getFirstName());
+    user.setLastName(updatedUser.getLastName());
+    user.setAddress(updatedUser.getAddress());
+    userRepository.save(user);
+    return ResponseEntity.ok(user);
+}
 }
