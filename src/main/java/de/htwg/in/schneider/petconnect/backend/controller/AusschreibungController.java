@@ -73,20 +73,24 @@ public class AusschreibungController {
     //UPDATE
     @PutMapping("/{id}")
     public ResponseEntity<Ausschreibung> updateAusschreibung(@AuthenticationPrincipal Jwt jwt,@PathVariable Long id,@Valid @RequestBody Ausschreibung ausschreibungDetails) {
-        if (!userFromJwtIsTierbesitzer(jwt)) {
-            return ResponseEntity.status(403).build();
-        }
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
-        if (!opt.isPresent()) {
+        if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        
+
+        User currentUser = userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
         Ausschreibung ausschreibung = opt.get();
-        if (ausschreibung.getDateFrom().isAfter(ausschreibung.getDateTo())) {
+
+        if (currentUser.getRole() != Role.ADMIN &&
+        !ausschreibung.getOwner().getId().equals(currentUser.getId())) {
+        return ResponseEntity.status(403).build();
+        }
+        
+        if (ausschreibung.getDateFrom().isAfter(ausschreibungDetails.getDateTo())) {
         return ResponseEntity
         .badRequest()
         .build();
-    }
+        }
         ausschreibung.setPetName(ausschreibungDetails.getPetName());
         ausschreibung.setPetAge(ausschreibungDetails.getPetAge());
         ausschreibung.setCity(ausschreibungDetails.getCity());
@@ -105,13 +109,19 @@ public class AusschreibungController {
     //DELETE
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAusschreibung(@AuthenticationPrincipal Jwt jwt,@PathVariable Long id) {
-        if (!userFromJwtIsTierbesitzer(jwt)) {
-            return ResponseEntity.status(403).build();
-        }
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
-        if (!opt.isPresent()) {
+        if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        User currentUser =userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
+        Ausschreibung ausschreibung = opt.get();
+
+        if (currentUser.getRole() != Role.ADMIN && 
+        !ausschreibung.getOwner().getId().equals(currentUser.getId())) {
+        return ResponseEntity.status(403).build();
+        }
+
         ausschreibungRepository.delete(opt.get());
         LOG.info("Deleted ausschreibung with id " + id);
         return ResponseEntity.noContent().build();

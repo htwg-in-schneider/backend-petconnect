@@ -66,6 +66,15 @@ public class DataLoader {
             "alicemuster+sucher@petconnect.de",
             "auth0|6a2177b1009fd25f88a7e9bc",
             Role.TIERSUCHER);
+    
+    upsertUser(
+            userRepository,
+            "Bob",
+            "2",
+            "12345 Adminstadt",
+            "alicemuster+besitzer2@gmail.com",
+            "auth0|6a2851e1b19c802d64b694b7",
+            Role.TIERBESITZER);
 }
 
 private void upsertUser(
