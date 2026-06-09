@@ -26,6 +26,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT,"/api/ausschreibungen/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE,"/api/ausschreibungen/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/users/*").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/users/me").authenticated()
                         .requestMatchers("/api/users/**").authenticated()
                         .requestMatchers("/api/**").permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
