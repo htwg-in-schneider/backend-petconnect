@@ -26,6 +26,14 @@ public class User {
     @JsonIgnore
     private List<Ausschreibung> ausschreibungen;
 
+    @OneToMany(mappedBy = "meldenderUser")
+    @JsonIgnore
+    private List<Meldung> erstellteMeldungen;
+
+    @OneToMany(mappedBy = "gemeldeterUser")
+    @JsonIgnore
+    private List<Meldung> empfangeneMeldungen;
+
     public Long getId() {
         return id;
     }
@@ -73,5 +81,17 @@ public class User {
     }
     public void setAusschreibungen(List<Ausschreibung> ausschreibungen) {
     this.ausschreibungen = ausschreibungen;
+    }
+    public List<Meldung> getErstellteMeldungen() {
+        return erstellteMeldungen;
+    }
+    public void setErstellteMeldungen(List<Meldung> erstellteMeldungen) {
+        this.erstellteMeldungen = erstellteMeldungen;
+    }
+    public List<Meldung> getEmpfangeneMeldungen() {
+        return empfangeneMeldungen;
+    }
+    public void setEmpfangeneMeldungen(List<Meldung> empfangeneMeldungen) {
+        this.empfangeneMeldungen = empfangeneMeldungen;
     }
 }
