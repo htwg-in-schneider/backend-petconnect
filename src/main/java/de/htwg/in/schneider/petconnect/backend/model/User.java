@@ -34,6 +34,14 @@ public class User {
     @JsonIgnore
     private List<Meldung> empfangeneMeldungen;
 
+    @OneToMany(mappedBy = "sender")
+    @JsonIgnore
+    private List<Message> sentMessages;
+
+    @OneToMany(mappedBy = "receiver")
+    @JsonIgnore
+    private List<Message> receivedMessages;
+
     public Long getId() {
         return id;
     }
@@ -93,5 +101,17 @@ public class User {
     }
     public void setEmpfangeneMeldungen(List<Meldung> empfangeneMeldungen) {
         this.empfangeneMeldungen = empfangeneMeldungen;
+    }
+    public List<Message> getSentMessages() {
+        return sentMessages;
+    }
+    public void setSentMessages(List<Message> sentMessages) {
+        this.sentMessages = sentMessages;
+    }
+    public List<Message> getReceivedMessages() {
+        return receivedMessages;
+    }
+    public void setReceivedMessages(List<Message> receivedMessages) {
+        this.receivedMessages = receivedMessages;
     }
 }

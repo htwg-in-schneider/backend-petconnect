@@ -29,6 +29,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/users/me").authenticated()
                         .requestMatchers("/api/users/**").authenticated()
                         .requestMatchers(HttpMethod.POST,"/api/meldungen/*").authenticated()
+                        .requestMatchers("/api/messages/**").authenticated()
                         .requestMatchers("/api/**").permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(withDefaults()))
