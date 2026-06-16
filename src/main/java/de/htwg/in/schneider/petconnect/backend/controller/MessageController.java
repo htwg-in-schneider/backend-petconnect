@@ -19,8 +19,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 import de.htwg.in.schneider.petconnect.backend.dto.MessageRequest;
+import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.MessageRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.model.Message;
 import de.htwg.in.schneider.petconnect.backend.model.User;
 import de.htwg.in.schneider.petconnect.backend.dto.ChatOverview;
@@ -34,6 +36,9 @@ private MessageRepository messageRepository;
 
 @Autowired
 private UserRepository userRepository;
+
+@Autowired
+private AusschreibungRepository ausschreibungRepository;
 
 @PostMapping
 public ResponseEntity<?> sendMessage(@AuthenticationPrincipal Jwt jwt,@RequestBody MessageRequest request) {
@@ -50,21 +55,32 @@ message.setSender(sender);
 message.setReceiver(receiver);
 message.setText(request.getText());
 message.setSentAt(LocalDateTime.now());
+message.setType(Message.MessageType.TEXT);
+
+Ausschreibung ausschreibung =
+    ausschreibungRepository
+        .findById(request.getAusschreibungId())
+        .orElseThrow();
+
+message.setAusschreibung(ausschreibung);
 
 messageRepository.save(message);
 
 return ResponseEntity.ok().build();
 }
 
-@GetMapping("/chat/{userId}")
-public List<Message> getChat(@AuthenticationPrincipal Jwt jwt,@PathVariable Long userId) {
+@GetMapping("/chat/{userId}/{ausschreibungId}")
+public List<Message> getChat(@AuthenticationPrincipal Jwt jwt,@PathVariable Long userId, @PathVariable Long ausschreibungId) {
 
     User currentUser =userRepository.findByOauthId(jwt.getSubject())
                     .orElseThrow();
 
-    return messageRepository.findBySenderIdAndReceiverIdOrSenderIdAndReceiverId(
+    return messageRepository.findByAusschreibungIdAndSenderIdAndReceiverIdOrAusschreibungIdAndSenderIdAndReceiverId(
+                    ausschreibungId,
                     currentUser.getId(),
                     userId,
+
+                    ausschreibungId,
                     userId,
                     currentUser.getId()
             );
@@ -98,7 +114,7 @@ public List<ChatOverview> getChatOverview(
                 currentUser.getId(),
                 currentUser.getId());
 
-    Map<Long, ChatOverview> chats =
+    Map<String, ChatOverview> chats =
         new HashMap<>();
 
     for (Message message : messages) {
@@ -117,12 +133,18 @@ public List<ChatOverview> getChatOverview(
                 message.getSender();
         }
 
+        String key =
+            otherUser.getId()
+            + "-"
+            + message.getAusschreibung().getId();
+            
         chats.put(
-            otherUser.getId(),
+            key,
             new ChatOverview(
                 otherUser.getId(),
                 otherUser.getFirstName(),
-                message.getText()
+                message.getText(),
+                message.getAusschreibung().getId()
             )
         );
     }

@@ -3,6 +3,8 @@ package de.htwg.in.schneider.petconnect.backend.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -10,6 +12,11 @@ import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Message {
+
+    public enum MessageType {
+        TEXT,
+        REQUEST
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +31,12 @@ public class Message {
     private String text;
 
     private LocalDateTime sentAt;
+
+    @Enumerated(EnumType.STRING)
+    private MessageType type;
+
+    @ManyToOne
+    private Ausschreibung ausschreibung;
 
     public Long getId() {
         return id;
@@ -54,5 +67,17 @@ public class Message {
     }
     public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
+    }
+    public MessageType getType() {
+        return type;
+    }
+    public void setType(MessageType type) {
+        this.type = type;
+    }
+    public Ausschreibung getAusschreibung() {
+        return ausschreibung;
+    }
+    public void setAusschreibung(Ausschreibung ausschreibung) {
+        this.ausschreibung = ausschreibung;
     }
 }

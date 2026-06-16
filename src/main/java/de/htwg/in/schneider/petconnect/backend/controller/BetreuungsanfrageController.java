@@ -1,5 +1,7 @@
 package de.htwg.in.schneider.petconnect.backend.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -13,9 +15,11 @@ import de.htwg.in.schneider.petconnect.backend.dto.BetreuungsanfrageRequest;
 import de.htwg.in.schneider.petconnect.backend.model.AnfrageStatus;
 import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.model.Betreuungsanfrage;
+import de.htwg.in.schneider.petconnect.backend.model.Message;
 import de.htwg.in.schneider.petconnect.backend.model.User;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.BetreuungsanfrageRepository;
+import de.htwg.in.schneider.petconnect.backend.repository.MessageRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
 
 @RestController
@@ -30,6 +34,9 @@ private AusschreibungRepository ausschreibungRepository;
 
 @Autowired
 private UserRepository userRepository;
+
+@Autowired
+private MessageRepository messageRepository;
 
 @PostMapping
 public ResponseEntity<?> createRequest(
@@ -54,6 +61,16 @@ public ResponseEntity<?> createRequest(
     anfrage.setStatus(AnfrageStatus.OFFEN);
 
     anfrageRepository.save(anfrage);
+
+    Message message = new Message();
+
+    message.setSender(requester);
+    message.setReceiver(ausschreibung.getOwner());
+    message.setText( "Betreuungsanfrage");
+    message.setType(Message.MessageType.REQUEST);
+    message.setSentAt(LocalDateTime.now());
+
+    messageRepository.save(message);
 
     return ResponseEntity.ok().build();
 }

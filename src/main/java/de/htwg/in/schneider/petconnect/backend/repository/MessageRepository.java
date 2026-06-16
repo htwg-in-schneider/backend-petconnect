@@ -10,12 +10,16 @@ import de.htwg.in.schneider.petconnect.backend.model.Message;
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    List<Message> findBySenderIdAndReceiverIdOrSenderIdAndReceiverId(
-            Long sender1,
-            Long receiver1,
-            Long sender2,
-            Long receiver2
-    );
+    List<Message>
+findByAusschreibungIdAndSenderIdAndReceiverIdOrAusschreibungIdAndSenderIdAndReceiverId(
+    Long ausschreibungId1,
+    Long sender1,
+    Long receiver1,
+
+    Long ausschreibungId2,
+    Long sender2,
+    Long receiver2
+);
 
     List<Message> findBySenderIdOrReceiverId(
         Long senderId,
