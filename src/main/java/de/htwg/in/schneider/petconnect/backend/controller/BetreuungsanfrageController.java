@@ -68,6 +68,7 @@ public ResponseEntity<?> createRequest(
     message.setReceiver(ausschreibung.getOwner());
     message.setText( "Betreuungsanfrage");
     message.setType(Message.MessageType.REQUEST);
+    message.setAusschreibung(ausschreibung);
     message.setSentAt(LocalDateTime.now());
 
     messageRepository.save(message);
