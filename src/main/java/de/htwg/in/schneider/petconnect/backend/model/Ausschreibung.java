@@ -23,6 +23,11 @@ import java.util.List;
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Ausschreibung {
+    public enum AusschreibungStatus {
+    VERFUEGBAR,
+    VERGEBEN
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -50,6 +55,13 @@ public class Ausschreibung {
 
     @ManyToOne
     private User owner;
+
+    @Enumerated(EnumType.STRING)
+    private AusschreibungStatus status = AusschreibungStatus.VERFUEGBAR;
+
+    @OneToMany(mappedBy = "ausschreibung")
+    @JsonIgnore
+    private List<Betreuungsanfrage> anfragen;
 
     // Getters and setters
     public Long getId() {

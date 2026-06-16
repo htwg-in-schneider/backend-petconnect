@@ -42,6 +42,10 @@ public class User {
     @JsonIgnore
     private List<Message> receivedMessages;
 
+    @OneToMany(mappedBy = "requester")
+@JsonIgnore
+private List<Betreuungsanfrage> betreuungsanfragen;
+
     public Long getId() {
         return id;
     }
