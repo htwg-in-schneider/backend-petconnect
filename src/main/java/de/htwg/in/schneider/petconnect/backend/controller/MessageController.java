@@ -144,7 +144,8 @@ public List<ChatOverview> getChatOverview(
                 otherUser.getId(),
                 otherUser.getFirstName(),
                 message.getText(),
-                message.getAusschreibung().getId()
+                message.getAusschreibung().getId(),
+                message.getAusschreibung().getPetName()
             )
         );
     }

@@ -5,17 +5,20 @@ public class ChatOverview {
     private String userName;
     private String lastMessage;
     private Long ausschreibungId;
+    private String petName;
 
     public ChatOverview(
             Long userId,
             String userName,
             String lastMessage,
-            Long ausschreibungId) {
+            Long ausschreibungId,
+            String petName) {
 
         this.userId = userId;
         this.userName = userName;
         this.lastMessage = lastMessage;
         this.ausschreibungId = ausschreibungId;
+        this.petName = petName;
     }
 
     public Long getUserId() {
@@ -32,5 +35,9 @@ public class ChatOverview {
 
     public Long getAusschreibungId() {
         return ausschreibungId;
+    }
+
+    public String getPetName() {
+        return petName;
     }
 }
