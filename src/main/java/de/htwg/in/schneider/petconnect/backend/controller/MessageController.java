@@ -1,7 +1,10 @@
 package de.htwg.in.schneider.petconnect.backend.controller;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,7 @@ import de.htwg.in.schneider.petconnect.backend.repository.MessageRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
 import de.htwg.in.schneider.petconnect.backend.model.Message;
 import de.htwg.in.schneider.petconnect.backend.model.User;
+import de.htwg.in.schneider.petconnect.backend.dto.ChatOverview;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -64,6 +68,66 @@ public List<Message> getChat(@AuthenticationPrincipal Jwt jwt,@PathVariable Long
                     userId,
                     currentUser.getId()
             );
+}
+
+@GetMapping
+public List<Message> getMyMessages(
+        @AuthenticationPrincipal Jwt jwt) {
+
+    User currentUser = userRepository.findByOauthId(jwt.getSubject()) 
+                        .orElseThrow();
+
+    return messageRepository.findBySenderIdOrReceiverId(
+            currentUser.getId(),
+            currentUser.getId()
+        );
+}
+
+@GetMapping("/overview")
+public List<ChatOverview> getChatOverview(
+        @AuthenticationPrincipal Jwt jwt) {
+
+    User currentUser =
+        userRepository.findByOauthId(
+            jwt.getSubject()
+        ).orElseThrow();
+
+    List<Message> messages =
+        messageRepository
+            .findBySenderIdOrReceiverId(
+                currentUser.getId(),
+                currentUser.getId());
+
+    Map<Long, ChatOverview> chats =
+        new HashMap<>();
+
+    for (Message message : messages) {
+
+        User otherUser;
+
+        if (message.getSender().getId()
+                .equals(currentUser.getId())) {
+
+            otherUser =
+                message.getReceiver();
+
+        } else {
+
+            otherUser =
+                message.getSender();
+        }
+
+        chats.put(
+            otherUser.getId(),
+            new ChatOverview(
+                otherUser.getId(),
+                otherUser.getFirstName(),
+                message.getText()
+            )
+        );
+    }
+
+    return new ArrayList<>(chats.values());
 }
 
 }

@@ -101,4 +101,10 @@ public ResponseEntity<User> updateUser(
 
         return ResponseEntity.ok(user);
     }
+
+    @GetMapping("/{id}")
+    public User getUser(@PathVariable Long id) {
+    return userRepository.findById(id)
+            .orElseThrow();
+}
 }

@@ -123,6 +123,10 @@ private void upsertUser(
         User tierbesitzer = userRepository
         .findByEmail("alicemuster+besitzer@petconnect.de")
         .orElseThrow();
+
+        User tierbesitzer2 = userRepository
+        .findByEmail("alicemuster+besitzer2@gmail.com")
+        .orElseThrow();
         Ausschreibung a1 = new Ausschreibung();
 
         a1.setOwner(tierbesitzer);
@@ -163,6 +167,20 @@ private void upsertUser(
         a3.setCompensation("Bezahlung");
         a3.setImageUrl("https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308");
         repository.saveAll(Arrays.asList(a1, a2, a3));
+
+        Ausschreibung a4 = new Ausschreibung();
+        a4.setOwner(tierbesitzer2);
+        a4.setPetName("Fluffy");
+        a4.setPetAge(1);
+        a4.setCity("Löffingen");
+        a4.setPostalCode("79843");
+        a4.setAnimalType(AnimalType.BIRD);
+        a4.setDescription("Need a bird sitter for my parrot Fluffy during the week.");
+        a4.setDateFrom(LocalDate.of(2026, 8, 5));
+        a4.setDateTo(LocalDate.of(2026, 8, 12));
+        a4.setCompensation("Bezahlung");
+        a4.setImageUrl("https://images.unsplash.com/photo-1552728089-57bdde30beb3");
+        repository.saveAll(Arrays.asList(a1, a2, a3, a4));
         
 
         //Add reviews
