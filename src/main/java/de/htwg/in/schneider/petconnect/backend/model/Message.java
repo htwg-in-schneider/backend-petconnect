@@ -38,6 +38,9 @@ public class Message {
     @ManyToOne
     private Ausschreibung ausschreibung;
 
+    @ManyToOne
+    private Betreuungsanfrage anfrage;
+
     public Long getId() {
         return id;
     }
@@ -79,5 +82,11 @@ public class Message {
     }
     public void setAusschreibung(Ausschreibung ausschreibung) {
         this.ausschreibung = ausschreibung;
+    }
+    public Betreuungsanfrage getAnfrage() {
+        return anfrage;
+    }
+    public void setAnfrage(Betreuungsanfrage anfrage) {
+        this.anfrage = anfrage;
     }
 }

@@ -178,6 +178,14 @@ public class Ausschreibung {
     this.owner = owner;
     }
 
+    public AusschreibungStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AusschreibungStatus status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
 
@@ -193,6 +201,7 @@ public class Ausschreibung {
                 + ", dateTo='" + dateTo + '\''
                 + ", compensation='" + compensation + '\''
                 + ", imageUrl='" + imageUrl + '\''
+                + ", status='" + status + '\''
                 + '}';
 
     }
