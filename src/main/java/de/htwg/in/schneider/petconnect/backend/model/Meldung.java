@@ -1,6 +1,9 @@
 package de.htwg.in.schneider.petconnect.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -10,16 +13,26 @@ public class Meldung {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank
+    @Column(nullable = false)
     private String grund;
 
+    @NotBlank
+    @Column(nullable = false)
     private String beschreibung;
 
+    @NotNull
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false)
     private User gemeldeterUser;
 
     @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false)
     private User meldenderUser;
 
     

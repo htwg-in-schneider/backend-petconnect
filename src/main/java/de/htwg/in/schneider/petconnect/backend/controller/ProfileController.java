@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 
 import de.htwg.in.schneider.petconnect.backend.model.User;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -30,7 +31,7 @@ public class ProfileController {
                 .orElse(ResponseEntity.notFound().build());
     }
     @PutMapping
-    public ResponseEntity<User> updateProfile(@AuthenticationPrincipal Jwt jwt,@RequestBody User updatedUser) {
+    public ResponseEntity<User> updateProfile(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody User updatedUser) {
     Optional<User> userOpt =userRepository.findByOauthId(jwt.getSubject());
     if (!userOpt.isPresent()) {
         return ResponseEntity.notFound().build();

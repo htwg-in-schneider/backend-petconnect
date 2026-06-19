@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import de.htwg.in.schneider.petconnect.backend.model.Meldung;
 import de.htwg.in.schneider.petconnect.backend.repository.MeldungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import jakarta.validation.Valid;
 import de.htwg.in.schneider.petconnect.backend.model.User;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,6 +35,7 @@ public List<Meldung> getMeldungen() {
 public ResponseEntity<Meldung> createMeldung(
         @AuthenticationPrincipal Jwt jwt,
         @PathVariable Long userId,
+        @Valid
         @RequestBody Meldung meldung) {
 
     User meldender =

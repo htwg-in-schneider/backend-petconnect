@@ -1,5 +1,8 @@
 package de.htwg.in.schneider.petconnect.backend.model;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -11,15 +14,22 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank
+    @Column(nullable = false)
     private String email;
-
+    @NotBlank
+    @Column(nullable = false)
     private String firstName;
+    @NotBlank
+    @Column(nullable = false)
     private String lastName;
+    
     private String address;
-
     private String oauthId;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(nullable = false)
     private Role role;
 
     @OneToMany(mappedBy = "owner")
@@ -43,8 +53,8 @@ public class User {
     private List<Message> receivedMessages;
 
     @OneToMany(mappedBy = "requester")
-@JsonIgnore
-private List<Betreuungsanfrage> betreuungsanfragen;
+    @JsonIgnore
+    private List<Betreuungsanfrage> betreuungsanfragen;
 
     public Long getId() {
         return id;
