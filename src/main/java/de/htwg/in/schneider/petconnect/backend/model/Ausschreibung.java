@@ -12,10 +12,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.OneToMany;
-
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,20 +35,33 @@ public class Ausschreibung {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @NotBlank
+    @Column(nullable = false)
     private String petName;
+    @Min(value = 0, message = "Alter darf nicht negativ sein")
     private int petAge;
     @NotBlank
+    @Column(nullable = false)
     private String city;
+    @NotBlank
+    @Pattern(regexp = "\\d{5}",message = "PLZ muss aus genau 5 Ziffern bestehen")
+    @Column(nullable = false)
     private String postalCode;
     @Enumerated(EnumType.STRING)
     @NotNull
+    @Column(nullable = false)
     private AnimalType animalType;
+    @NotBlank
+    @Size(min = 10,max = 1000,message = "Beschreibung muss zwischen 10 und 1000 Zeichen lang sein")
+    @Column(nullable = false)
     private String description;
     @NotNull
+    @Column(nullable = false)
     private LocalDate dateFrom;
     @NotNull
+    @Column(nullable = false)
     private LocalDate dateTo;
     @NotBlank
+    @Column(nullable = false)
     private String compensation;
     private String imageUrl;
 

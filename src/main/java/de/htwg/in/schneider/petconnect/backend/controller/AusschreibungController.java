@@ -77,20 +77,16 @@ public class AusschreibungController {
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-
         User currentUser = userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
         Ausschreibung ausschreibung = opt.get();
-
-        if (currentUser.getRole() != Role.ADMIN &&
-        !ausschreibung.getOwner().getId().equals(currentUser.getId())) {
+        if (currentUser.getRole() != Role.ADMIN &&!ausschreibung.getOwner().getId()
+            .equals(currentUser.getId())) {
         return ResponseEntity.status(403).build();
         }
-        
-        if (ausschreibung.getDateFrom().isAfter(ausschreibungDetails.getDateTo())) {
-        return ResponseEntity
-        .badRequest()
-        .build();
+         if (ausschreibungDetails.getDateFrom().isAfter(ausschreibungDetails.getDateTo())) {
+        return ResponseEntity.badRequest().build();
         }
+
         ausschreibung.setPetName(ausschreibungDetails.getPetName());
         ausschreibung.setPetAge(ausschreibungDetails.getPetAge());
         ausschreibung.setCity(ausschreibungDetails.getCity());

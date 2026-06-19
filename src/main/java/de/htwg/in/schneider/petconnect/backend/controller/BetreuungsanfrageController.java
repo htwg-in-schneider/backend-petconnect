@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import de.htwg.in.schneider.petconnect.backend.dto.BetreuungsanfrageRequest;
 import de.htwg.in.schneider.petconnect.backend.model.AnfrageStatus;
 import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
-import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung.AusschreibungStatus;
 import de.htwg.in.schneider.petconnect.backend.model.Betreuungsanfrage;
 import de.htwg.in.schneider.petconnect.backend.model.Message;
 import de.htwg.in.schneider.petconnect.backend.model.User;
