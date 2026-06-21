@@ -17,9 +17,11 @@ public class User {
     @NotBlank
     @Column(nullable = false)
     private String email;
+
     @NotBlank
     @Column(nullable = false)
     private String firstName;
+    
     @NotBlank
     @Column(nullable = false)
     private String lastName;

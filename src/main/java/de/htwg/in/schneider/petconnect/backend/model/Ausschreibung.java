@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -34,35 +35,45 @@ public class Ausschreibung {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     @NotBlank
     @Column(nullable = false)
     private String petName;
+
     @Min(value = 0, message = "Alter darf nicht negativ sein")
     private int petAge;
+
     @NotBlank
     @Column(nullable = false)
     private String city;
+
     @NotBlank
     @Pattern(regexp = "\\d{5}",message = "PLZ muss aus genau 5 Ziffern bestehen")
     @Column(nullable = false)
     private String postalCode;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     @Column(nullable = false)
     private AnimalType animalType;
+
     @NotBlank
     @Size(min = 10,max = 1000,message = "Beschreibung muss zwischen 10 und 1000 Zeichen lang sein")
     @Column(nullable = false)
     private String description;
+
     @NotNull
     @Column(nullable = false)
     private LocalDate dateFrom;
+
     @NotNull
     @Column(nullable = false)
     private LocalDate dateTo;
+
     @NotBlank
     @Column(nullable = false)
     private String compensation;
+
     private String imageUrl;
 
     @OneToMany(mappedBy = "ausschreibung", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -70,9 +81,13 @@ public class Ausschreibung {
     private List<Review> reviews;
 
     @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false)
     private User owner;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(nullable = false)
     private AusschreibungStatus status = AusschreibungStatus.VERFUEGBAR;
 
     @OneToMany(mappedBy = "ausschreibung")

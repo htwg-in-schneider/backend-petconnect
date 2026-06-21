@@ -50,7 +50,8 @@ public class AusschreibungController {
     
     //CREATE
     @PostMapping
-    public ResponseEntity<Ausschreibung> createAusschreibung(@AuthenticationPrincipal Jwt jwt,@Valid @RequestBody Ausschreibung ausschreibung) {
+    public ResponseEntity<Ausschreibung> createAusschreibung(@AuthenticationPrincipal Jwt jwt,
+        @Valid @RequestBody Ausschreibung ausschreibung) {
         if (!userFromJwtIsTierbesitzer(jwt)) {
             return ResponseEntity.status(403).build();
         }
@@ -72,7 +73,8 @@ public class AusschreibungController {
 
     //UPDATE
     @PutMapping("/{id}")
-    public ResponseEntity<Ausschreibung> updateAusschreibung(@AuthenticationPrincipal Jwt jwt,@PathVariable Long id,@Valid @RequestBody Ausschreibung ausschreibungDetails) {
+    public ResponseEntity<Ausschreibung> updateAusschreibung(@AuthenticationPrincipal Jwt jwt,
+        @PathVariable Long id,@Valid @RequestBody Ausschreibung ausschreibungDetails) {
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -104,7 +106,8 @@ public class AusschreibungController {
 
     //DELETE
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteAusschreibung(@AuthenticationPrincipal Jwt jwt,@PathVariable Long id) {
+    public ResponseEntity<Object> deleteAusschreibung(@AuthenticationPrincipal Jwt jwt,
+        @PathVariable Long id) {
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -133,8 +136,9 @@ public class AusschreibungController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @GetMapping("/meine")
-public ResponseEntity<List<Ausschreibung>> getMeineAusschreibungen(@AuthenticationPrincipal Jwt jwt) {
+    public ResponseEntity<List<Ausschreibung>> getMeineAusschreibungen(@AuthenticationPrincipal Jwt jwt) {
     if (!userFromJwtIsTierbesitzer(jwt)) {
         return ResponseEntity.status(403).build();
     }

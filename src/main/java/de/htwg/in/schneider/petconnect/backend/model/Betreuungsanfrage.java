@@ -1,11 +1,14 @@
 package de.htwg.in.schneider.petconnect.backend.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 public class Betreuungsanfrage {
@@ -15,12 +18,18 @@ public class Betreuungsanfrage {
     private Long id;
 
     @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false)
     private Ausschreibung ausschreibung;
 
     @ManyToOne
+    @NotNull
+    @JoinColumn(nullable = false)
     private User requester;
 
     @Enumerated(EnumType.STRING)
+    @NotNull
+    @Column(nullable = false)
     private AnfrageStatus status;
 
     public Long getId() {

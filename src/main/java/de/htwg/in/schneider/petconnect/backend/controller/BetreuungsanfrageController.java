@@ -22,6 +22,7 @@ import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepositor
 import de.htwg.in.schneider.petconnect.backend.repository.BetreuungsanfrageRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.MessageRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/anfragen")
@@ -40,31 +41,24 @@ private UserRepository userRepository;
 private MessageRepository messageRepository;
 
 @PostMapping
-public ResponseEntity<?> createRequest(
-        @AuthenticationPrincipal Jwt jwt,
+public ResponseEntity<?> createRequest(@AuthenticationPrincipal Jwt jwt, @Valid
         @RequestBody BetreuungsanfrageRequest dto) {
 
-    User requester =
-            userRepository.findByOauthId(
-                    jwt.getSubject())
-            .orElseThrow();
+    User requester =userRepository.findByOauthId(jwt.getSubject())
+                .orElseThrow();
 
-    Ausschreibung ausschreibung =
-            ausschreibungRepository.findById(
-                    dto.getAusschreibungId())
-            .orElseThrow();
+    Ausschreibung ausschreibung =ausschreibungRepository.findById(
+                dto.getAusschreibungId())
+                .orElseThrow();
 
-    Betreuungsanfrage anfrage =
-            new Betreuungsanfrage();
+    Betreuungsanfrage anfrage =new Betreuungsanfrage();
 
     anfrage.setRequester(requester);
     anfrage.setAusschreibung(ausschreibung);
     anfrage.setStatus(AnfrageStatus.OFFEN);
-
     anfrageRepository.save(anfrage);
 
     Message message = new Message();
-
     message.setSender(requester);
     message.setReceiver(ausschreibung.getOwner());
     message.setText( "Betreuungsanfrage");
@@ -72,7 +66,6 @@ public ResponseEntity<?> createRequest(
     message.setAusschreibung(ausschreibung);
     message.setAnfrage(anfrage);
     message.setSentAt(LocalDateTime.now());
-
     messageRepository.save(message);
 
     return ResponseEntity.ok().build();

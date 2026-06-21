@@ -38,6 +38,8 @@ public ResponseEntity<Meldung> createMeldung(
         @Valid
         @RequestBody Meldung meldung) {
 
+                System.out.println("MELDUNG CONTROLLER ERREICHT");
+                System.out.println("JWT: " + jwt);
     User meldender =
             userRepository.findByOauthId(
                     jwt.getSubject())

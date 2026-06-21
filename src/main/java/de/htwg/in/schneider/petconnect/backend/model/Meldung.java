@@ -3,6 +3,7 @@ package de.htwg.in.schneider.petconnect.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +20,7 @@ public class Meldung {
 
     @NotBlank
     @Column(nullable = false)
+    @Size(min = 10, max = 500)
     private String beschreibung;
 
     @NotNull
