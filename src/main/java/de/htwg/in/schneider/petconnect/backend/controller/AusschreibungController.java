@@ -79,7 +79,12 @@ public class AusschreibungController {
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        User currentUser = userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
+        Optional<User> currentUserOpt =userRepository.findByOauthId(jwt.getSubject());
+        if (currentUserOpt.isEmpty()) {
+        return ResponseEntity.status(404).build();
+        }
+        User currentUser = currentUserOpt.get();
+
         Ausschreibung ausschreibung = opt.get();
         if (currentUser.getRole() != Role.ADMIN &&!ausschreibung.getOwner().getId()
             .equals(currentUser.getId())) {

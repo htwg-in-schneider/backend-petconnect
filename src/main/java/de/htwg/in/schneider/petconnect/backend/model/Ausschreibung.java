@@ -81,7 +81,6 @@ public class Ausschreibung {
     private List<Review> reviews;
 
     @ManyToOne
-    @NotNull
     @JoinColumn(nullable = false)
     private User owner;
 

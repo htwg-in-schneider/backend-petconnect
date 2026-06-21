@@ -38,24 +38,24 @@ public ResponseEntity<Meldung> createMeldung(
         @Valid
         @RequestBody Meldung meldung) {
 
-                System.out.println("MELDUNG CONTROLLER ERREICHT");
-                System.out.println("JWT: " + jwt);
-    User meldender =
-            userRepository.findByOauthId(
+if (jwt == null || jwt.getSubject() == null) {
+    return ResponseEntity.status(401).build();
+}
+
+User meldender =userRepository.findByOauthId(
                     jwt.getSubject())
                     .orElseThrow();
 
-    User gemeldeter =
-            userRepository.findById(userId)
+User gemeldeter =userRepository.findById(userId)
                     .orElseThrow();
 
-    meldung.setMeldenderUser(meldender);
-    meldung.setGemeldeterUser(gemeldeter);
-    meldung.setCreatedAt(LocalDateTime.now());
-
-    return ResponseEntity.ok(
-            meldungRepository.save(meldung));
+if (meldender.getId().equals(gemeldeter.getId())) {
+return ResponseEntity.badRequest().build();
 }
+meldung.setMeldenderUser(meldender);
+meldung.setGemeldeterUser(gemeldeter);
+meldung.setCreatedAt(LocalDateTime.now());
 
-
+return ResponseEntity.ok(meldungRepository.save(meldung));
+}
 }

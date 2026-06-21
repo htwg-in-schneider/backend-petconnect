@@ -23,17 +23,14 @@ public class Meldung {
     @Size(min = 10, max = 500)
     private String beschreibung;
 
-    @NotNull
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
-    @NotNull
     @JoinColumn(nullable = false)
     private User gemeldeterUser;
 
     @ManyToOne
-    @NotNull
     @JoinColumn(nullable = false)
     private User meldenderUser;
 

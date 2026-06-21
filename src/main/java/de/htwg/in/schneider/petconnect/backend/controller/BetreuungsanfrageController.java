@@ -44,53 +44,73 @@ private MessageRepository messageRepository;
 public ResponseEntity<?> createRequest(@AuthenticationPrincipal Jwt jwt, @Valid
         @RequestBody BetreuungsanfrageRequest dto) {
 
-    User requester =userRepository.findByOauthId(jwt.getSubject())
+User requester =userRepository.findByOauthId(jwt.getSubject())
                 .orElseThrow();
 
-    Ausschreibung ausschreibung =ausschreibungRepository.findById(
+Ausschreibung ausschreibung =ausschreibungRepository.findById(
                 dto.getAusschreibungId())
                 .orElseThrow();
 
-    Betreuungsanfrage anfrage =new Betreuungsanfrage();
+if (ausschreibung.getOwner().getId().equals(requester.getId())) {
+    return ResponseEntity.badRequest().build();
+}        
 
-    anfrage.setRequester(requester);
-    anfrage.setAusschreibung(ausschreibung);
-    anfrage.setStatus(AnfrageStatus.OFFEN);
-    anfrageRepository.save(anfrage);
+if (ausschreibung.getStatus() !=
+        Ausschreibung.AusschreibungStatus.VERFUEGBAR) {
+    return ResponseEntity.badRequest().build();
+}
 
-    Message message = new Message();
-    message.setSender(requester);
-    message.setReceiver(ausschreibung.getOwner());
-    message.setText( "Betreuungsanfrage");
-    message.setType(Message.MessageType.REQUEST);
-    message.setAusschreibung(ausschreibung);
-    message.setAnfrage(anfrage);
-    message.setSentAt(LocalDateTime.now());
-    messageRepository.save(message);
+Betreuungsanfrage anfrage =new Betreuungsanfrage();
+anfrage.setRequester(requester);
+anfrage.setAusschreibung(ausschreibung);
+anfrage.setStatus(AnfrageStatus.OFFEN);
+anfrageRepository.save(anfrage);
 
-    return ResponseEntity.ok().build();
+Message message = new Message();
+message.setSender(requester);
+message.setReceiver(ausschreibung.getOwner());
+message.setText( "Betreuungsanfrage");
+message.setType(Message.MessageType.REQUEST);
+message.setAusschreibung(ausschreibung);
+message.setAnfrage(anfrage);
+message.setSentAt(LocalDateTime.now());
+messageRepository.save(message);
+
+return ResponseEntity.ok().build();
 }
 
 @PostMapping("/{id}/accept")
-public ResponseEntity<?> acceptRequest(@PathVariable Long id) {
-    Betreuungsanfrage anfrage =anfrageRepository.findById(id)
-                                .orElseThrow();
-    anfrage.setStatus(AnfrageStatus.ANGENOMMEN);
-    Ausschreibung ausschreibung =anfrage.getAusschreibung();
-    ausschreibung.setStatus(Ausschreibung.AusschreibungStatus.VERGEBEN);
-    ausschreibungRepository.save(ausschreibung);
-    anfrageRepository.save(anfrage);
+public ResponseEntity<?> acceptRequest(@AuthenticationPrincipal Jwt jwt,@PathVariable Long id) {
+User currentUser = userRepository.findByOauthId(jwt.getSubject())
+                .orElseThrow();
 
-    return ResponseEntity.ok().build();
+Betreuungsanfrage anfrage =anfrageRepository.findById(id)
+                                .orElseThrow();
+
+if (!anfrage.getAusschreibung().getOwner().getId().equals(currentUser.getId())) {
+    return ResponseEntity.status(403).build();
+}
+anfrage.setStatus(AnfrageStatus.ANGENOMMEN);
+Ausschreibung ausschreibung =anfrage.getAusschreibung();
+ausschreibung.setStatus(Ausschreibung.AusschreibungStatus.VERGEBEN);
+ausschreibungRepository.save(ausschreibung);
+anfrageRepository.save(anfrage);
+
+return ResponseEntity.ok().build();
 }
 
 @PostMapping("/{id}/reject")
-public ResponseEntity<?> rejectRequest( @PathVariable Long id) {
-    Betreuungsanfrage anfrage =anfrageRepository.findById(id)
+public ResponseEntity<?> rejectRequest(@AuthenticationPrincipal Jwt jwt, @PathVariable Long id) {
+User currentUser = userRepository.findByOauthId(jwt.getSubject())
+                .orElseThrow();
+Betreuungsanfrage anfrage =anfrageRepository.findById(id)
                         .orElseThrow();
-    anfrage.setStatus(AnfrageStatus.ABGELEHNT);
-    anfrageRepository.save(anfrage);
+if (!anfrage.getAusschreibung().getOwner().getId().equals(currentUser.getId())) {
+    return ResponseEntity.status(403).build();
+}
+anfrage.setStatus(AnfrageStatus.ABGELEHNT);
+anfrageRepository.save(anfrage);
 
-    return ResponseEntity.ok().build();
+return ResponseEntity.ok().build();
 }
 }
