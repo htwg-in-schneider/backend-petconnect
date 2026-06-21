@@ -1,6 +1,7 @@
 package de.htwg.in.schneider.petconnect.backend.controller;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,14 +50,11 @@ public ResponseEntity<Meldung> createMeldung(
 if (jwt == null || jwt.getSubject() == null) {
     return ResponseEntity.status(401).build();
 }
-
 User meldender =userRepository.findByOauthId(
                     jwt.getSubject())
                     .orElseThrow();
-
 User gemeldeter =userRepository.findById(userId)
                     .orElseThrow();
-
 if (meldender.getId().equals(gemeldeter.getId())) {
 return ResponseEntity.badRequest().build();
 }
@@ -65,6 +63,22 @@ meldung.setGemeldeterUser(gemeldeter);
 meldung.setCreatedAt(LocalDateTime.now());
 
 return ResponseEntity.ok(meldungRepository.save(meldung));
+}
+
+@DeleteMapping("/{id}")
+public ResponseEntity<Void> deleteMeldung(
+        @PathVariable Long id,
+        @AuthenticationPrincipal Jwt jwt) {
+
+    Optional<User> adminOpt = userRepository.findByOauthId(jwt.getSubject());
+    if (adminOpt.isEmpty() || adminOpt.get().getRole() != Role.ADMIN) {
+        return ResponseEntity.status(403).build();
+    }
+    if (!meldungRepository.existsById(id)) {
+        return ResponseEntity.notFound().build();
+    }
+    meldungRepository.deleteById(id);
+    return ResponseEntity.noContent().build();
 }
 
 }
