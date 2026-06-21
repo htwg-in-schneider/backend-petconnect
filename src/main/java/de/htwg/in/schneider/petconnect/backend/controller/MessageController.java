@@ -22,6 +22,7 @@ import de.htwg.in.schneider.petconnect.backend.dto.MessageRequest;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.MessageRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import jakarta.validation.Valid;
 import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.model.Message;
 import de.htwg.in.schneider.petconnect.backend.model.User;
@@ -41,13 +42,18 @@ private UserRepository userRepository;
 private AusschreibungRepository ausschreibungRepository;
 
 @PostMapping
-public ResponseEntity<?> sendMessage(@AuthenticationPrincipal Jwt jwt,@RequestBody MessageRequest request) {
+public ResponseEntity<?> sendMessage(@AuthenticationPrincipal Jwt jwt,
+    @Valid @RequestBody MessageRequest request) {
 
 User sender = userRepository.findByOauthId(jwt.getSubject())
                     .orElseThrow();
 
 User receiver = userRepository.findById(request.getReceiverId())
                     .orElseThrow();
+
+if (sender.getId().equals(receiver.getId())) {
+    return ResponseEntity.badRequest().build();
+}
 
 Message message = new Message();
 
@@ -57,10 +63,14 @@ message.setText(request.getText());
 message.setSentAt(LocalDateTime.now());
 message.setType(Message.MessageType.TEXT);
 
-Ausschreibung ausschreibung =
-    ausschreibungRepository
+Ausschreibung ausschreibung = ausschreibungRepository
         .findById(request.getAusschreibungId())
         .orElseThrow();
+ 
+if (!ausschreibung.getOwner().getId().equals(receiver.getId())
+        && !ausschreibung.getOwner().getId().equals(sender.getId())) {
+    return ResponseEntity.status(403).build();
+}
 
 message.setAusschreibung(ausschreibung);
 

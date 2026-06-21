@@ -1,9 +1,15 @@
 package de.htwg.in.schneider.petconnect.backend.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class MessageRequest {
-private Long receiverId;
-private String text;
-private Long ausschreibungId;
+    @NotNull
+    private Long receiverId;
+    @NotBlank
+    private String text;
+    @NotNull
+    private Long ausschreibungId;
 
     public Long getReceiverId() {
         return receiverId;
