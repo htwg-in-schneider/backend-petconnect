@@ -85,7 +85,7 @@ public List<Message> getChat(@AuthenticationPrincipal Jwt jwt,@PathVariable Long
     User currentUser =userRepository.findByOauthId(jwt.getSubject())
                     .orElseThrow();
 
-    return messageRepository.findByAusschreibungIdAndSenderIdAndReceiverIdOrAusschreibungIdAndSenderIdAndReceiverId(
+    return messageRepository.findByAusschreibungIdAndSenderIdAndReceiverIdOrAusschreibungIdAndSenderIdAndReceiverIdOrderBySentAtAsc(
                     ausschreibungId,
                     currentUser.getId(),
                     userId,
@@ -103,7 +103,7 @@ public List<Message> getMyMessages(
     User currentUser = userRepository.findByOauthId(jwt.getSubject()) 
                         .orElseThrow();
 
-    return messageRepository.findBySenderIdOrReceiverId(
+    return messageRepository.findBySenderIdOrReceiverIdOrderBySentAtAsc(
             currentUser.getId(),
             currentUser.getId()
         );
@@ -120,7 +120,7 @@ public List<ChatOverview> getChatOverview(
 
     List<Message> messages =
         messageRepository
-            .findBySenderIdOrReceiverId(
+            .findBySenderIdOrReceiverIdOrderBySentAtAsc(
                 currentUser.getId(),
                 currentUser.getId());
 

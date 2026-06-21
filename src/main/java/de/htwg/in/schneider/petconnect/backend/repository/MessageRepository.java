@@ -11,7 +11,7 @@ import de.htwg.in.schneider.petconnect.backend.model.Message;
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
     List<Message>
-findByAusschreibungIdAndSenderIdAndReceiverIdOrAusschreibungIdAndSenderIdAndReceiverId(
+findByAusschreibungIdAndSenderIdAndReceiverIdOrAusschreibungIdAndSenderIdAndReceiverIdOrderBySentAtAsc(
     Long ausschreibungId1,
     Long sender1,
     Long receiver1,
@@ -21,7 +21,7 @@ findByAusschreibungIdAndSenderIdAndReceiverIdOrAusschreibungIdAndSenderIdAndRece
     Long receiver2
 );
 
-    List<Message> findBySenderIdOrReceiverId(
+    List<Message> findBySenderIdOrReceiverIdOrderBySentAtAsc(
         Long senderId,
         Long receiverId
 );
