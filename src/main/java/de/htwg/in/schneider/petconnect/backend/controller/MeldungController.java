@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import de.htwg.in.schneider.petconnect.backend.model.Meldung;
+import de.htwg.in.schneider.petconnect.backend.model.Role;
 import de.htwg.in.schneider.petconnect.backend.repository.MeldungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
 import jakarta.validation.Valid;
@@ -27,8 +28,15 @@ private UserRepository userRepository;
 
 @CrossOrigin(origins = "http://localhost:5173")
 @GetMapping
-public List<Meldung> getMeldungen() {
-    return meldungRepository.findAll();
+public ResponseEntity<List<Meldung>> getMeldungen(
+        @AuthenticationPrincipal Jwt jwt) {
+    User currentUser = userRepository
+            .findByOauthId(jwt.getSubject())
+            .orElseThrow();
+    if (currentUser.getRole() != Role.ADMIN) {
+        return ResponseEntity.status(403).build();
+    }
+    return ResponseEntity.ok(meldungRepository.findAll());
 }
 
 @PostMapping("/{userId}")
@@ -58,4 +66,5 @@ meldung.setCreatedAt(LocalDateTime.now());
 
 return ResponseEntity.ok(meldungRepository.save(meldung));
 }
+
 }

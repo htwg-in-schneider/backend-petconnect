@@ -113,6 +113,9 @@ public class AusschreibungController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteAusschreibung(@AuthenticationPrincipal Jwt jwt,
         @PathVariable Long id) {
+            System.out.println("DELETE CONTROLLER ERREICHT");
+System.out.println(jwt.getSubject());
+
         Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -120,6 +123,9 @@ public class AusschreibungController {
 
         User currentUser =userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
         Ausschreibung ausschreibung = opt.get();
+
+
+System.out.println(currentUser.getRole());
 
         if (currentUser.getRole() != Role.ADMIN && 
         !ausschreibung.getOwner().getId().equals(currentUser.getId())) {

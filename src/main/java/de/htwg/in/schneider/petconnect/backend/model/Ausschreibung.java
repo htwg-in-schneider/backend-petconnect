@@ -76,7 +76,9 @@ public class Ausschreibung {
 
     private String imageUrl;
 
-    @OneToMany(mappedBy = "ausschreibung", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "ausschreibung", 
+    cascade = CascadeType.ALL, 
+    orphanRemoval = true)
     @JsonIgnore
     private List<Review> reviews;
 
@@ -89,9 +91,20 @@ public class Ausschreibung {
     @Column(nullable = false)
     private AusschreibungStatus status = AusschreibungStatus.VERFUEGBAR;
 
-    @OneToMany(mappedBy = "ausschreibung")
+    @OneToMany(mappedBy = "ausschreibung",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+    )
     @JsonIgnore
     private List<Betreuungsanfrage> anfragen;
+
+    @OneToMany(
+    mappedBy = "ausschreibung",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Message> messages;
 
     // Getters and setters
     public Long getId() {

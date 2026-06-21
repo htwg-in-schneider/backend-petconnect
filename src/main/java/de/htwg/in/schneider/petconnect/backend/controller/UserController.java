@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import de.htwg.in.schneider.petconnect.backend.model.Role;
 import de.htwg.in.schneider.petconnect.backend.model.User;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
@@ -29,11 +30,9 @@ private boolean userFromJwtIsAdmin(Jwt jwt) {
     if (jwt == null || jwt.getSubject() == null) {
         return false;
     }
-    Optional<User> user =
-            userRepository.findByOauthId(
+    Optional<User> user =userRepository.findByOauthId(
                     jwt.getSubject());
-    return user.isPresent()
-            && user.get().getRole() == Role.ADMIN;
+    return user.isPresent()&& user.get().getRole() == Role.ADMIN;
 }
 
 // ADMIN: Alle Benutzer sehen
@@ -45,35 +44,30 @@ public ResponseEntity<List<User>> getUsers(
         return ResponseEntity.status(403).build();
     }
 
-    return ResponseEntity.ok(
-            userRepository.findAll());
+    return ResponseEntity.ok(userRepository.findAll());
 }
 
 // ADMIN: Benutzer bearbeiten
 @PutMapping("/{id}")
 public ResponseEntity<User> updateUser(
         @PathVariable Long id,
-        @RequestBody User updatedUser,
+        @Valid @RequestBody User updatedUser,
         @AuthenticationPrincipal Jwt jwt) {
 
     if (!userFromJwtIsAdmin(jwt)) {
         return ResponseEntity.status(403).build();
     }
-    Optional<User> opt =
-            userRepository.findById(id);
+    Optional<User> opt =userRepository.findById(id);
 
     if (opt.isEmpty()) {
         return ResponseEntity.notFound().build();
     }
 
     User user = opt.get();
-
     user.setFirstName(updatedUser.getFirstName());
     user.setLastName(updatedUser.getLastName());
     user.setRole(updatedUser.getRole());
-
     userRepository.save(user);
-
     return ResponseEntity.ok(user);
 }
 
@@ -81,10 +75,9 @@ public ResponseEntity<User> updateUser(
   @PutMapping("/me")
     public ResponseEntity<User> updateOwnProfile(
             @AuthenticationPrincipal Jwt jwt,
-            @RequestBody User updatedUser) {
+            @Valid @RequestBody User updatedUser) {
 
-        Optional<User> opt =
-                userRepository.findByOauthId(
+        Optional<User> opt =userRepository.findByOauthId(
                         jwt.getSubject());
 
         if (opt.isEmpty()) {
@@ -92,13 +85,10 @@ public ResponseEntity<User> updateUser(
         }
 
         User user = opt.get();
-
         user.setFirstName(updatedUser.getFirstName());
         user.setLastName(updatedUser.getLastName());
         // KEIN user.setRole(...)
-
         userRepository.save(user);
-
         return ResponseEntity.ok(user);
     }
 
