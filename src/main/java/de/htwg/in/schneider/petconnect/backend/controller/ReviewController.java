@@ -3,8 +3,10 @@ package de.htwg.in.schneider.petconnect.backend.controller;
 import de.htwg.in.schneider.petconnect.backend.dto.ReviewRequest;
 import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.model.Review;
+import de.htwg.in.schneider.petconnect.backend.model.Role;
 import de.htwg.in.schneider.petconnect.backend.model.User;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import jakarta.validation.Valid;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 
 import de.htwg.in.schneider.petconnect.backend.repository.ReviewRepository;
@@ -45,7 +47,8 @@ public class ReviewController {
 
 
     @PostMapping
-    public ResponseEntity<Review> createReview(@AuthenticationPrincipal Jwt jwt, @RequestBody ReviewRequest dto) {
+    public ResponseEntity<Review> createReview(@AuthenticationPrincipal Jwt jwt,
+        @Valid @RequestBody ReviewRequest dto) {
         LOG.info("Creating review");
      // Eingeloggten User holen    
     User reviewer = userRepository
@@ -111,8 +114,11 @@ public class ReviewController {
 
         
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> deleteReview(@PathVariable Long id) {
-
+    public ResponseEntity<Object> deleteReview(@PathVariable Long id,  @AuthenticationPrincipal Jwt jwt) {
+    User currentUser = userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
+    if (currentUser.getRole() != Role.ADMIN) {
+        return ResponseEntity.status(403).build();
+    }
     Review review =reviewRepository.findById(id).orElse(null);
     if (review == null) {
     return ResponseEntity.notFound().build();

@@ -3,6 +3,11 @@ import de.htwg.in.schneider.petconnect.backend.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -11,17 +16,27 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Min(value = 1, message = "Mindestens 1 Stern erforderlich")
+    @Max(value = 5, message = "Maximal 5 Sterne erlaubt")
+    @Column(nullable = false)
     private int stars;
+
+    @NotBlank(message = "Kommentar darf nicht leer sein")
+    @Size(min = 3, max = 1000, message = "Kommentar muss zwischen 3 und 1000 Zeichen lang sein")
+    @Column(nullable = false)
     private String text;
 
+    @NotNull        
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="reviewer_id")
+    @JoinColumn(name="reviewer_id", nullable = false)
     private User reviewer;
 
+    @NotNull
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="reviewed_user_id")
+    @JoinColumn(name="reviewed_user_id", nullable = false)
     private User reviewedUser;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name="ausschreibung_id", nullable = false)
     private Ausschreibung ausschreibung;

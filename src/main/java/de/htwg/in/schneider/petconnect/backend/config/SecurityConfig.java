@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/review/mine").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/review/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/review").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/review/*").authenticated()
                         .requestMatchers("/api/**").permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(withDefaults()))
