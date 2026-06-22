@@ -26,12 +26,10 @@ public class Meldung {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
     private User gemeldeterUser;
-
-    @NotNull 
+ 
     @ManyToOne
     @JoinColumn(nullable = false)
     private User meldenderUser;

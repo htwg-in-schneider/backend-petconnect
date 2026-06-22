@@ -49,7 +49,7 @@ public class DataLoader {
                 "alicemuster+admin@petconnect.de", "auth0|6a2176926d4bd56b9f690a2d", Role.ADMIN);
         upsertUser(userRepository, "Alice", "Muster", "Seestraße 12, 78462 Konstanz",
                 "alicemuster+besitzer@petconnect.de", "auth0|6a217774f78e54ce72cc2d50", Role.TIERBESITZER);
-        upsertUser(userRepository, "Alice", "Klein", "Hauptstraße 5, 78224 Singen",
+        upsertUser(userRepository, "Simon", "Klein", "Hauptstraße 5, 78224 Singen",
                 "alicemuster+sucher@petconnect.de", "auth0|6a2177b1009fd25f88a7e9bc", Role.TIERSUCHER);
         upsertUser(userRepository, "Bob", "Müller", "Gartenweg 3, 78315 Radolfzell",
                 "alicemuster+besitzer2@gmail.com", "auth0|6a2851e1b19c802d64b694b7", Role.TIERBESITZER);
