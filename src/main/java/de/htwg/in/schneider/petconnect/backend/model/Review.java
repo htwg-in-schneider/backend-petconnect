@@ -1,5 +1,5 @@
 package de.htwg.in.schneider.petconnect.backend.model;
-
+import de.htwg.in.schneider.petconnect.backend.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
@@ -10,13 +10,17 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
     private int stars;
     private String text;
-    private String userName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ausschreibung_id")
-    private Ausschreibung ausschreibung;
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="reviewer_id")
+    private User reviewer;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name="reviewed_user_id")
+    private User reviewedUser;
 
     public Long getId() {
         return id;
@@ -42,19 +46,23 @@ public class Review {
         this.text = text;
     }
 
-    public String getUserName() {
-        return userName;
+    public User getReviewer() {
+        return reviewer;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setReviewer(User reviewer) {
+        this.reviewer = reviewer;
     }
 
-    public Ausschreibung getAusschreibung() {
-        return ausschreibung;
+    public User getReviewedUser() {
+        return reviewedUser;
     }
 
-    public void setAusschreibung(Ausschreibung ausschreibung) {
-        this.ausschreibung = ausschreibung;
+    public void setReviewedUser(User reviewedUser) {
+        this.reviewedUser = reviewedUser;
     }
+
+
+
+
 }

@@ -185,22 +185,22 @@ private void upsertUser(
 
         //Add reviews
         Review r1 = new Review();
-        r1.setAusschreibung(a1);
+        
         r1.setStars(5);
         r1.setText("Sehr liebevoller Umgang mit Bello, gerne wieder!");
-        r1.setUserName("Anna");
+        
 
         Review r2 = new Review();
-        r2.setAusschreibung(a1);
+        
         r2.setStars(4);
         r2.setText("Bello war glücklich, aber es gab ein kleines Missverständnis bei der Fütterung.");
-        r2.setUserName("Max");
+        
 
         Review r3 = new Review();
-        r3.setAusschreibung(a2);
+        
         r3.setStars(5);
         r3.setText("Milo wurde bestens versorgt, sehr empfehlenswert!");
-        r3.setUserName("Sophie");
+        
         
         reviewRepository.saveAll(Arrays.asList(r1, r2, r3));
 

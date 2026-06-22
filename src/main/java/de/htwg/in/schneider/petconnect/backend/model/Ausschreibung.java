@@ -30,7 +30,8 @@ import java.util.List;
 public class Ausschreibung {
     public enum AusschreibungStatus {
     VERFUEGBAR,
-    VERGEBEN
+    VERGEBEN,
+    ABGESCHLOSSEN
     }
 
     @Id
@@ -78,12 +79,6 @@ public class Ausschreibung {
     private String compensation;
 
     private String imageUrl;
-
-    @OneToMany(mappedBy = "ausschreibung", 
-    cascade = CascadeType.ALL, 
-    orphanRemoval = true)
-    @JsonIgnore
-    private List<Review> reviews;
 
     @ManyToOne
     @JoinColumn(nullable = false)
@@ -196,24 +191,6 @@ public class Ausschreibung {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
-
-    public void addReview(Review review) {
-        reviews.add(review);
-        review.setAusschreibung(this);
-    }
-
-    public void removeReview(Review review) {
-        reviews.remove(review);
-        review.setAusschreibung(null);
     }
 
      public User getOwner() {

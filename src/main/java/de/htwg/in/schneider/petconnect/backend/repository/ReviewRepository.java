@@ -8,6 +8,7 @@ import de.htwg.in.schneider.petconnect.backend.model.Review;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findByAusschreibungId(Long ausschreibungId);
+    List<Review> findByReviewedUserId(Long userId);
+    List<Review> findByReviewerId(Long userId);
     
 }

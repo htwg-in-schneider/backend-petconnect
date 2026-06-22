@@ -1,9 +1,7 @@
 package de.htwg.in.schneider.petconnect.backend.controller;
 
-import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.model.Review;
 
-import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.ReviewRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.htwg.in.schneider.petconnect.backend.model.User;
+import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/review")
@@ -25,76 +26,50 @@ public class ReviewController {
     private ReviewRepository reviewRepository;
 
     @Autowired
-    private AusschreibungRepository ausschreibungRepository;
-
-
+    private UserRepository userRepository;
+    
 
     @GetMapping
     public List<Review> getAllReviews() {
-        LOG.info("Fetching all reviews");
-        List<Review> reviews = reviewRepository.findAll();
-        LOG.info("Found {} reviews", reviews != null ? reviews.size() : 0);
-        return reviews;
+       return reviewRepository.findAll();
     }
 
-
-
-    @GetMapping("/ausschreibung/{id}")
-    public List<Review> getReviewsByAusschreibung(@PathVariable Long id) {
-        LOG.info("Fetching reviews for ausschreibung id {}", id);
-        List<Review> reviews = reviewRepository.findByAusschreibungId(id);
-        LOG.info("Found {} reviews for ausschreibung {}", reviews != null ? reviews.size() : 0, id);
-        return reviews;
-    }
 
     @PostMapping
     public ResponseEntity<Review> createReview(@RequestBody Review review) {
-        Long ausschreibungId = null;
-        if (review != null && review.getAusschreibung() != null) {
-            ausschreibungId = review.getAusschreibung().getId();
-        }
-        LOG.info("Attempting to create review for ausschreibung id {}", ausschreibungId);
-        
-        if (review == null) {
-            LOG.warn("Review payload is null");
+        LOG.info("Creating review");
+    //Sterne prüfen
+        if(review.getStars()<1 || review.getStars()> 5){
             return ResponseEntity.badRequest().build();
         }
-        
-        int stars = review.getStars();
-        if (stars < 1 || stars > 5) {
-            LOG.warn("Review stars out of bounds: {}", stars);
-            return ResponseEntity.badRequest().build();
-        }
+    // Reviewer & Bewerteter User prüfen
+    if(review.getReviewer() == null || review.getReviewer().getId() == null){
+    return ResponseEntity.badRequest().build();
+    }
+        if(review.getReviewedUser() == null || review.getReviewedUser().getId() == null){
+        return ResponseEntity.badRequest().build();
+    }
+    //User laden aus der Datenbank
+    User reviewer = userRepository.findById(review.getReviewer().getId()).orElse(null);
+    User reviewedUser = userRepository.findById(review.getReviewedUser().getId()).orElse(null);
 
-        if (review.getAusschreibung() == null ||
-            review.getAusschreibung().getId() == null) {
-            LOG.warn("Review creation failed: Ausschreibung or Ausschreibung ID is null");
-            return ResponseEntity.badRequest().build();
-
-        }
-
-        Ausschreibung ausschreibung =ausschreibungRepository.findById(
-                        review.getAusschreibung().getId()).orElse(null);
-
-        if (ausschreibung == null) {
-            LOG.warn("Attempted to create a review for non-existing ausschreibung with id {}", review.getAusschreibung().getId());
-            return ResponseEntity.badRequest().build();
-        }
-
-        review.setAusschreibung(ausschreibung);
-        Review savedReview =reviewRepository.save(review);
-        LOG.info("Created review with id {}", savedReview.getId()); 
-        return ResponseEntity.ok(savedReview);
-
+    if (reviewer == null || reviewedUser == null) {
+        return ResponseEntity.badRequest().build();
     }
 
+    review.setReviewer(reviewer);
+    review.setReviewedUser(reviewedUser);
 
+    Review savedReview = reviewRepository.save(review);
 
+    return ResponseEntity.ok(savedReview);
+}
+
+        
     @DeleteMapping("/{id}")
 
     public ResponseEntity<Object> deleteReview(
-            @PathVariable Long id
-    ) {
+            @PathVariable Long id) {
 
         Review review =
                 reviewRepository.findById(id)
@@ -110,6 +85,6 @@ public class ReviewController {
 
         return ResponseEntity.noContent().build();
 
-    }
+            }
+        }
 
-}
