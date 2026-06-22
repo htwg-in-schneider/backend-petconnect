@@ -114,38 +114,37 @@ public class AusschreibungController {
     public ResponseEntity<Object> deleteAusschreibung(@AuthenticationPrincipal Jwt jwt,
         @PathVariable Long id) {
             System.out.println("DELETE CONTROLLER ERREICHT");
-System.out.println(jwt.getSubject());
+    System.out.println(jwt.getSubject());
 
-        Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
-        if (opt.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
+    if (opt.isEmpty()) {
+        return ResponseEntity.notFound().build();
+    }
 
-        User currentUser =userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
-        Ausschreibung ausschreibung = opt.get();
+    User currentUser =userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
+    Ausschreibung ausschreibung = opt.get();
 
 
 System.out.println(currentUser.getRole());
 
-        if (currentUser.getRole() != Role.ADMIN && 
-        !ausschreibung.getOwner().getId().equals(currentUser.getId())) {
-        return ResponseEntity.status(403).build();
-        }
-
-        ausschreibungRepository.delete(opt.get());
-        LOG.info("Deleted ausschreibung with id " + id);
-        return ResponseEntity.noContent().build();
+    if (currentUser.getRole() != Role.ADMIN && 
+    !ausschreibung.getOwner().getId().equals(currentUser.getId())) {
+    return ResponseEntity.status(403).build();
+    }
+    ausschreibungRepository.delete(opt.get());
+    LOG.info("Deleted ausschreibung with id " + id);
+    return ResponseEntity.noContent().build();
     }
 
     //GET BY ID
     @GetMapping("/{id}")
     public ResponseEntity<Ausschreibung> getAusschreibungById(@PathVariable Long id) {
-        Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
-        if (opt.isPresent()) {
-            return ResponseEntity.ok(opt.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    Optional<Ausschreibung> opt = ausschreibungRepository.findById(id);
+    if (opt.isPresent()) {
+    return ResponseEntity.ok(opt.get());
+    } else {
+    return ResponseEntity.notFound().build();
+    }
     }
 
     @GetMapping("/meine")
@@ -157,38 +156,27 @@ System.out.println(currentUser.getRole());
     User owner =userRepository.findByOauthId(jwt.getSubject()).get();
 
     return ResponseEntity.ok(ausschreibungRepository.findByOwner(owner));
-}
-@PostMapping("/{id}/complete")
-public ResponseEntity<?> completeBetreuung(
+    }
+    @PostMapping("/{id}/complete")
+    public ResponseEntity<?> completeBetreuung(
         @AuthenticationPrincipal Jwt jwt,
         @PathVariable Long id) {
         System.out.println("COMPLETE CONTROLLER ERREICHT");
         
-    User currentUser = userRepository.findByOauthId(
-            jwt.getSubject()).orElseThrow();
-    Ausschreibung ausschreibung = ausschreibungRepository.findById(id)
-            .orElseThrow();
-
-            System.out.println("ALTER STATUS: "
-        + ausschreibung.getStatus());
-
-ausschreibung.setStatus(
-        Ausschreibung.AusschreibungStatus.ABGESCHLOSSEN);
-
-System.out.println("NEUER STATUS: "
-        + ausschreibung.getStatus());
-
-ausschreibungRepository.save(ausschreibung);
-    if (!ausschreibung.getOwner().getId()
-            .equals(currentUser.getId())) {
+    User currentUser = userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
+    Ausschreibung ausschreibung = ausschreibungRepository.findById(id).orElseThrow();
+    // prüfen, ob User der Owner ist
+    if (!ausschreibung.getOwner().getId().equals(currentUser.getId())) {
         return ResponseEntity.status(403).build();
     }
-    if (ausschreibung.getStatus()
-            != Ausschreibung.AusschreibungStatus.VERGEBEN) {
+    // prüfen, ob Status VERGEBEN ist
+    if (ausschreibung.getStatus() != Ausschreibung.AusschreibungStatus.VERGEBEN) {
         return ResponseEntity.badRequest().build();
     }
+    // ERST DANN Status ändern
     ausschreibung.setStatus(Ausschreibung.AusschreibungStatus.ABGESCHLOSSEN);
     ausschreibungRepository.save(ausschreibung);
+    
     return ResponseEntity.ok().build();
-}
-}
+}}
+        

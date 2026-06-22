@@ -89,8 +89,7 @@ public class ReviewController {
     }
 
     // Doppelte Bewertung verhindern
-    boolean bereitsBewertet =
-            reviewRepository.existsByReviewerIdAndAusschreibungId(
+    boolean bereitsBewertet =reviewRepository.existsByReviewerIdAndAusschreibungId(
                     reviewer.getId(),
                     ausschreibung.getId());
 
@@ -107,30 +106,51 @@ public class ReviewController {
     review.setAusschreibung(ausschreibung);
 
     Review savedReview = reviewRepository.save(review);
-
     return ResponseEntity.ok(savedReview);
 }
 
         
     @DeleteMapping("/{id}")
+    public ResponseEntity<Object> deleteReview(@PathVariable Long id) {
 
-    public ResponseEntity<Object> deleteReview(
-            @PathVariable Long id) {
+    Review review =reviewRepository.findById(id).orElse(null);
+    if (review == null) {
+    return ResponseEntity.notFound().build();
+    }
+    reviewRepository.delete(review);
+    return ResponseEntity.noContent().build();
+    }
 
-        Review review =
-                reviewRepository.findById(id)
-                        .orElse(null);
+@GetMapping("/user/{userId}")
+public List<Review> getReviewsForUser(@PathVariable Long userId) {
+    return reviewRepository.findByReviewedUserId(userId);
+}
 
-        if (review == null) {
+@GetMapping("/mine")
+public ResponseEntity<List<Review>> getMyReviews(@AuthenticationPrincipal Jwt jwt) {
+    User currentUser = userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
+    List<Review> reviews = reviewRepository.findByReviewedUserId(currentUser.getId());
+    return ResponseEntity.ok(reviews);
+}
 
-            return ResponseEntity.notFound().build();
+@GetMapping("/user/{userId}/average")
+public ResponseEntity<Double> getAverageRating(@PathVariable Long userId) {
+    List<Review> reviews = reviewRepository.findByReviewedUserId(userId);
+    if (reviews.isEmpty()) {
+        return ResponseEntity.ok(0.0);
+    }
+    double average = reviews.stream()
+            .mapToInt(Review::getStars)
+            .average()
+            .orElse(0.0);
+    return ResponseEntity.ok(average);
+}
 
-        }
+@GetMapping("/ausschreibung/{ausschreibungId}")
+public List<Review> getReviewsByAusschreibung(@PathVariable Long ausschreibungId) {
+    return reviewRepository.findByAusschreibungId(ausschreibungId);
+}
 
-        reviewRepository.delete(review);
 
-        return ResponseEntity.noContent().build();
-
-            }
-        }
+}
 
