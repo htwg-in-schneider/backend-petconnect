@@ -158,4 +158,37 @@ System.out.println(currentUser.getRole());
 
     return ResponseEntity.ok(ausschreibungRepository.findByOwner(owner));
 }
+@PostMapping("/{id}/complete")
+public ResponseEntity<?> completeBetreuung(
+        @AuthenticationPrincipal Jwt jwt,
+        @PathVariable Long id) {
+        System.out.println("COMPLETE CONTROLLER ERREICHT");
+        
+    User currentUser = userRepository.findByOauthId(
+            jwt.getSubject()).orElseThrow();
+    Ausschreibung ausschreibung = ausschreibungRepository.findById(id)
+            .orElseThrow();
+
+            System.out.println("ALTER STATUS: "
+        + ausschreibung.getStatus());
+
+ausschreibung.setStatus(
+        Ausschreibung.AusschreibungStatus.ABGESCHLOSSEN);
+
+System.out.println("NEUER STATUS: "
+        + ausschreibung.getStatus());
+
+ausschreibungRepository.save(ausschreibung);
+    if (!ausschreibung.getOwner().getId()
+            .equals(currentUser.getId())) {
+        return ResponseEntity.status(403).build();
+    }
+    if (ausschreibung.getStatus()
+            != Ausschreibung.AusschreibungStatus.VERGEBEN) {
+        return ResponseEntity.badRequest().build();
+    }
+    ausschreibung.setStatus(Ausschreibung.AusschreibungStatus.ABGESCHLOSSEN);
+    ausschreibungRepository.save(ausschreibung);
+    return ResponseEntity.ok().build();
+}
 }

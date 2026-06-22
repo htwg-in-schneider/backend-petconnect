@@ -166,7 +166,7 @@ private void upsertUser(
         a3.setDateTo(LocalDate.of(2026, 9, 12));
         a3.setCompensation("Bezahlung");
         a3.setImageUrl("https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308");
-        repository.saveAll(Arrays.asList(a1, a2, a3));
+      
 
         Ausschreibung a4 = new Ausschreibung();
         a4.setOwner(tierbesitzer2);
@@ -184,25 +184,29 @@ private void upsertUser(
         
 
         //Add reviews
-        Review r1 = new Review();
-        
+        /*Review r1 = new Review();
+        r1.setReviewer(tierbesitzer2);
+        r1.setReviewedUser(tierbesitzer);
+        r1.setAusschreibung(a1);
         r1.setStars(5);
         r1.setText("Sehr liebevoller Umgang mit Bello, gerne wieder!");
-        
 
         Review r2 = new Review();
-        
+        r2.setReviewer(tierbesitzer);
+        r2.setReviewedUser(tierbesitzer2);
+        r2.setAusschreibung(a1);
         r2.setStars(4);
         r2.setText("Bello war glücklich, aber es gab ein kleines Missverständnis bei der Fütterung.");
-        
 
         Review r3 = new Review();
-        
+        r3.setReviewer(tierbesitzer2);
+        r3.setReviewedUser(tierbesitzer);
+        r3.setAusschreibung(a2);
         r3.setStars(5);
         r3.setText("Milo wurde bestens versorgt, sehr empfehlenswert!");
         
         
-        reviewRepository.saveAll(Arrays.asList(r1, r2, r3));
+        reviewRepository.saveAll(Arrays.asList(r1, r2, r3));/* */
 
         LOGGER.info("Initial data loaded successfully.");
 

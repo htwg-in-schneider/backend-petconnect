@@ -22,6 +22,10 @@ public class Review {
     @JoinColumn(name="reviewed_user_id")
     private User reviewedUser;
 
+    @ManyToOne
+    @JoinColumn(name="ausschreibung_id", nullable = false)
+    private Ausschreibung ausschreibung;
+
     public Long getId() {
         return id;
     }
@@ -60,6 +64,14 @@ public class Review {
 
     public void setReviewedUser(User reviewedUser) {
         this.reviewedUser = reviewedUser;
+    }
+
+    public Ausschreibung getAusschreibung() {
+    return ausschreibung;
+    }
+
+    public void setAusschreibung(Ausschreibung ausschreibung){
+        this.ausschreibung=ausschreibung;
     }
 
 

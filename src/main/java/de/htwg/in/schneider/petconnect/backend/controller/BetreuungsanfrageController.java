@@ -93,6 +93,7 @@ if (!anfrage.getAusschreibung().getOwner().getId().equals(currentUser.getId())) 
 anfrage.setStatus(AnfrageStatus.ANGENOMMEN);
 Ausschreibung ausschreibung =anfrage.getAusschreibung();
 ausschreibung.setStatus(Ausschreibung.AusschreibungStatus.VERGEBEN);
+ausschreibung.setBetreuer(anfrage.getRequester());
 ausschreibungRepository.save(ausschreibung);
 anfrageRepository.save(anfrage);
 

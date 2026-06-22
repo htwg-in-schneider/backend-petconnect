@@ -1,19 +1,25 @@
 package de.htwg.in.schneider.petconnect.backend.controller;
 
+import de.htwg.in.schneider.petconnect.backend.dto.ReviewRequest;
+import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
 import de.htwg.in.schneider.petconnect.backend.model.Review;
+import de.htwg.in.schneider.petconnect.backend.model.User;
+import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 
 import de.htwg.in.schneider.petconnect.backend.repository.ReviewRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.htwg.in.schneider.petconnect.backend.model.User;
-import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
+
 
 @RestController
 @RequestMapping("/api/review")
@@ -27,6 +33,9 @@ public class ReviewController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AusschreibungRepository ausschreibungRepository;
     
 
     @GetMapping
@@ -36,29 +45,66 @@ public class ReviewController {
 
 
     @PostMapping
-    public ResponseEntity<Review> createReview(@RequestBody Review review) {
+    public ResponseEntity<Review> createReview(@AuthenticationPrincipal Jwt jwt, @RequestBody ReviewRequest dto) {
         LOG.info("Creating review");
+     // Eingeloggten User holen    
+    User reviewer = userRepository
+    .findByOauthId(jwt.getSubject())
+    .orElseThrow();
+
+    // Bewerteten User holen
+    User reviewedUser = userRepository
+            .findById(dto.getReviewedUserId())
+            .orElseThrow();
+
+     // Ausschreibung holen
+    Ausschreibung ausschreibung = ausschreibungRepository
+    .findById(dto.getAusschreibungId())
+            .orElseThrow();
+
     //Sterne prüfen
-        if(review.getStars()<1 || review.getStars()> 5){
+        if(dto.getStars()<1 || dto.getStars()> 5){
             return ResponseEntity.badRequest().build();
         }
-    // Reviewer & Bewerteter User prüfen
-    if(review.getReviewer() == null || review.getReviewer().getId() == null){
-    return ResponseEntity.badRequest().build();
-    }
-        if(review.getReviewedUser() == null || review.getReviewedUser().getId() == null){
+
+    // Betreuung muss abgeschlossen sein
+    if (ausschreibung.getStatus()
+            != Ausschreibung.AusschreibungStatus.ABGESCHLOSSEN) {
         return ResponseEntity.badRequest().build();
     }
-    //User laden aus der Datenbank
-    User reviewer = userRepository.findById(review.getReviewer().getId()).orElse(null);
-    User reviewedUser = userRepository.findById(review.getReviewedUser().getId()).orElse(null);
+    User owner = ausschreibung.getOwner();
+    User betreuer = ausschreibung.getBetreuer();
 
-    if (reviewer == null || reviewedUser == null) {
+     // Nur Besitzer und Betreuer dürfen bewerten
+    boolean ownerBewertetBetreuer =
+            reviewer.getId().equals(owner.getId())
+            && reviewedUser.getId().equals(betreuer.getId());
+
+    boolean betreuerBewertetOwner =
+            reviewer.getId().equals(betreuer.getId())
+            && reviewedUser.getId().equals(owner.getId());
+
+    if (!ownerBewertetBetreuer && !betreuerBewertetOwner) {
+        return ResponseEntity.status(403).build();
+    }
+
+    // Doppelte Bewertung verhindern
+    boolean bereitsBewertet =
+            reviewRepository.existsByReviewerIdAndAusschreibungId(
+                    reviewer.getId(),
+                    ausschreibung.getId());
+
+    if (bereitsBewertet) {
         return ResponseEntity.badRequest().build();
     }
 
+    // Review anlegen
+    Review review = new Review();
     review.setReviewer(reviewer);
     review.setReviewedUser(reviewedUser);
+    review.setStars(dto.getStars());
+    review.setText(dto.getText());
+    review.setAusschreibung(ausschreibung);
 
     Review savedReview = reviewRepository.save(review);
 

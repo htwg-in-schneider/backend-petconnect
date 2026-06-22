@@ -104,6 +104,10 @@ public class Ausschreibung {
     @JsonIgnore
     private List<Message> messages;
 
+    @ManyToOne
+    @JoinColumn(name = "betreuer_id")
+    private User betreuer;
+
     // Getters and setters
     public Long getId() {
         return id;
@@ -207,6 +211,14 @@ public class Ausschreibung {
 
     public void setStatus(AusschreibungStatus status) {
         this.status = status;
+    }
+
+    public User getBetreuer() {
+    return betreuer;
+    }
+
+    public void setBetreuer(User betreuer) {
+    this.betreuer = betreuer;
     }
 
     @Override

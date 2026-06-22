@@ -23,6 +23,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/api/profile").authenticated()
                         .requestMatchers(HttpMethod.POST,"/api/ausschreibungen").authenticated()
+                         .requestMatchers(HttpMethod.POST,"/api/ausschreibungen/*/complete").authenticated()
                         .requestMatchers(HttpMethod.PUT,"/api/ausschreibungen/*").authenticated()
                         .requestMatchers(HttpMethod.DELETE,"/api/ausschreibungen/*").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/api/users/*").authenticated()
