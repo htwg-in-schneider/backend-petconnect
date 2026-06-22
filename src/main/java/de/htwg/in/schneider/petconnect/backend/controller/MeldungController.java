@@ -27,7 +27,7 @@ private MeldungRepository meldungRepository;
 @Autowired
 private UserRepository userRepository;
 
-@CrossOrigin(origins = "http://localhost:5173")
+
 @GetMapping
 public ResponseEntity<List<Meldung>> getMeldungen(
         @AuthenticationPrincipal Jwt jwt) {
@@ -47,14 +47,8 @@ public ResponseEntity<Meldung> createMeldung(
         @Valid
         @RequestBody Meldung meldung) {
 
-if (jwt == null || jwt.getSubject() == null) {
-    return ResponseEntity.status(401).build();
-}
-User meldender =userRepository.findByOauthId(
-                    jwt.getSubject())
-                    .orElseThrow();
-User gemeldeter =userRepository.findById(userId)
-                    .orElseThrow();
+User meldender =userRepository.findByOauthId(jwt.getSubject()).orElseThrow();
+User gemeldeter =userRepository.findById(userId).orElseThrow();
 if (meldender.getId().equals(gemeldeter.getId())) {
 return ResponseEntity.badRequest().build();
 }

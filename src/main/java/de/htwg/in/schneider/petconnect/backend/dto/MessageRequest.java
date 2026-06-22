@@ -2,11 +2,13 @@ package de.htwg.in.schneider.petconnect.backend.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class MessageRequest {
     @NotNull
     private Long receiverId;
     @NotBlank
+    @Size(max = 2000, message = "Nachricht darf maximal 2000 Zeichen lang sein")
     private String text;
     @NotNull
     private Long ausschreibungId;

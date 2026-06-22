@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class Message {
@@ -37,6 +38,7 @@ public class Message {
     private User receiver;
 
     @NotBlank
+    @Size(max = 2000, message = "Nachricht darf maximal 2000 Zeichen lang sein")
     @Column(nullable = false)
     private String text;
 

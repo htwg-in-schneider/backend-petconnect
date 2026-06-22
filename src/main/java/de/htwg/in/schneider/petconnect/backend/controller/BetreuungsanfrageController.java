@@ -90,6 +90,9 @@ Betreuungsanfrage anfrage =anfrageRepository.findById(id)
 if (!anfrage.getAusschreibung().getOwner().getId().equals(currentUser.getId())) {
     return ResponseEntity.status(403).build();
 }
+if (anfrage.getStatus() != AnfrageStatus.OFFEN) {
+        return ResponseEntity.badRequest().build();
+}
 anfrage.setStatus(AnfrageStatus.ANGENOMMEN);
 Ausschreibung ausschreibung =anfrage.getAusschreibung();
 ausschreibung.setStatus(Ausschreibung.AusschreibungStatus.VERGEBEN);
@@ -108,6 +111,9 @@ Betreuungsanfrage anfrage =anfrageRepository.findById(id)
                         .orElseThrow();
 if (!anfrage.getAusschreibung().getOwner().getId().equals(currentUser.getId())) {
     return ResponseEntity.status(403).build();
+}
+if (anfrage.getStatus() != AnfrageStatus.OFFEN) {
+        return ResponseEntity.badRequest().build();
 }
 anfrage.setStatus(AnfrageStatus.ABGELEHNT);
 anfrageRepository.save(anfrage);

@@ -2,6 +2,7 @@ package de.htwg.in.schneider.petconnect.backend.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
@@ -18,17 +19,19 @@ public class Meldung {
     private String grund;
 
     @NotBlank
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     @Size(min = 10, max = 500)
     private String beschreibung;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(nullable = false)
     private User gemeldeterUser;
 
+    @NotNull 
     @ManyToOne
     @JoinColumn(nullable = false)
     private User meldenderUser;

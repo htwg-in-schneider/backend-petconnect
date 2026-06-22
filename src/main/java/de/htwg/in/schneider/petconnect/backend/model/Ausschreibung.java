@@ -61,7 +61,7 @@ public class Ausschreibung {
 
     @NotBlank
     @Size(min = 10,max = 1000,message = "Beschreibung muss zwischen 10 und 1000 Zeichen lang sein")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     private String description;
 
     @NotNull
@@ -107,6 +107,14 @@ public class Ausschreibung {
     @ManyToOne
     @JoinColumn(name = "betreuer_id")
     private User betreuer;
+
+    @OneToMany(
+    mappedBy = "ausschreibung",
+    cascade = CascadeType.ALL,
+    orphanRemoval = true
+    )
+    @JsonIgnore
+    private List<Review> reviews;
 
     // Getters and setters
     public Long getId() {
@@ -219,6 +227,14 @@ public class Ausschreibung {
 
     public void setBetreuer(User betreuer) {
     this.betreuer = betreuer;
+    }
+
+     public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
     }
 
     @Override

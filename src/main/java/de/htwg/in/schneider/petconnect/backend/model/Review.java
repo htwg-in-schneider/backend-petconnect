@@ -1,5 +1,4 @@
 package de.htwg.in.schneider.petconnect.backend.model;
-import de.htwg.in.schneider.petconnect.backend.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.*;
