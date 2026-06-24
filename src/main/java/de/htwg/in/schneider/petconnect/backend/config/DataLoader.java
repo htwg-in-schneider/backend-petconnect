@@ -164,6 +164,18 @@ public class DataLoader {
         a5.setCompensation("Tausch");
         a5.setImageUrl("https://images.unsplash.com/photo-1587300003388-59208cc962cb");
 
+         Ausschreibung a6 = new Ausschreibung();
+        a5.setOwner(tierbesitzer2);
+        a5.setPetName("Wurzel");
+        a5.setPetAge(2);
+        a5.setCity("Stuttgart");
+        a5.setPostalCode("70557");
+        a5.setAnimalType(AnimalType.CAT);
+        a5.setDescription("Verschmuste Wurzel liebt es gekrault zu werden und spielt auch sehr gerne. Sie liegt gerne in der Sonne und genießt die Wärme. Wenn sie zu lang liegt, bitte in den Schatten bringen.");
+        a5.setDateFrom(LocalDate.of(2027, 01, 2));
+        a5.setDateTo(LocalDate.of(2027,01, 5));
+        a5.setCompensation("Bezahlung");
+        a5.setImageUrl("https://cdn.pixabay.com/photo/2017/08/07/16/36/cat-2605502_1280.jpg");
         repository.saveAll(Arrays.asList(a1, a2, a3, a4, a5));
 
         // ── ABGESCHLOSSENE Ausschreibung mit Reviews ────────────────
