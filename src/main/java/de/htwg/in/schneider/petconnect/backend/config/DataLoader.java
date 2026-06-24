@@ -5,18 +5,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import de.htwg.in.schneider.petconnect.backend.model.Ausschreibung;
+import de.htwg.in.schneider.petconnect.backend.model.Meldung;
 import de.htwg.in.schneider.petconnect.backend.model.AnimalType;
 import de.htwg.in.schneider.petconnect.backend.model.AnfrageStatus;
 import de.htwg.in.schneider.petconnect.backend.model.Betreuungsanfrage;
 import de.htwg.in.schneider.petconnect.backend.repository.AusschreibungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.BetreuungsanfrageRepository;
+import de.htwg.in.schneider.petconnect.backend.repository.MeldungRepository;
 import de.htwg.in.schneider.petconnect.backend.repository.ReviewRepository;
 import de.htwg.in.schneider.petconnect.backend.model.Review;
 import de.htwg.in.schneider.petconnect.backend.model.User;
 import de.htwg.in.schneider.petconnect.backend.model.Role;
 import de.htwg.in.schneider.petconnect.backend.repository.UserRepository;
 import java.time.LocalDate;
-
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +34,13 @@ public class DataLoader {
             UserRepository userRepository,
             AusschreibungRepository repository,
             ReviewRepository reviewRepository,
-            BetreuungsanfrageRepository anfrageRepository) {
+            BetreuungsanfrageRepository anfrageRepository,
+            MeldungRepository meldungRepository) {
         return args -> {
             loadInitialUsers(userRepository);
             if (repository.count() == 0) {
                 LOGGER.info("Database is empty. Loading initial data...");
-                loadInitialData(userRepository, repository, reviewRepository, anfrageRepository);
+                loadInitialData(userRepository, repository, reviewRepository, anfrageRepository,meldungRepository);
             } else {
                 LOGGER.info("Database already contains data. Skipping data loading.");
             }
@@ -85,7 +88,8 @@ public class DataLoader {
             UserRepository userRepository,
             AusschreibungRepository repository,
             ReviewRepository reviewRepository,
-            BetreuungsanfrageRepository anfrageRepository) {
+            BetreuungsanfrageRepository anfrageRepository,
+            MeldungRepository meldungRepository) {
 
         User tierbesitzer = userRepository
                 .findByEmail("alicemuster+besitzer@petconnect.de")
@@ -165,18 +169,39 @@ public class DataLoader {
         a5.setImageUrl("https://images.unsplash.com/photo-1587300003388-59208cc962cb");
 
          Ausschreibung a6 = new Ausschreibung();
-        a5.setOwner(tierbesitzer2);
-        a5.setPetName("Wurzel");
-        a5.setPetAge(2);
-        a5.setCity("Stuttgart");
-        a5.setPostalCode("70557");
-        a5.setAnimalType(AnimalType.CAT);
-        a5.setDescription("Verschmuste Wurzel liebt es gekrault zu werden und spielt auch sehr gerne. Sie liegt gerne in der Sonne und genießt die Wärme. Wenn sie zu lang liegt, bitte in den Schatten bringen.");
-        a5.setDateFrom(LocalDate.of(2027, 01, 2));
-        a5.setDateTo(LocalDate.of(2027,01, 5));
-        a5.setCompensation("Bezahlung");
-        a5.setImageUrl("https://cdn.pixabay.com/photo/2017/08/07/16/36/cat-2605502_1280.jpg");
-        repository.saveAll(Arrays.asList(a1, a2, a3, a4, a5));
+        a6.setOwner(tierbesitzer2);
+        a6.setPetName("Wurzel");
+        a6.setPetAge(2);
+        a6.setCity("Stuttgart");
+        a6.setPostalCode("70557");
+        a6.setAnimalType(AnimalType.CAT);
+        a6.setDescription("Verschmuste Wurzel liebt es gekrault zu werden und spielt auch sehr gerne. Sie liegt gerne in der Sonne und genießt die Wärme. Wenn sie zu lang liegt, bitte in den Schatten bringen.");
+        a6.setDateFrom(LocalDate.of(2027, 01, 2));
+        a6.setDateTo(LocalDate.of(2027,01, 5));
+        a6.setCompensation("Bezahlung");
+        a6.setImageUrl("https://cdn.pixabay.com/photo/2017/08/07/16/36/cat-2605502_1280.jpg");
+
+        Ausschreibung aMeldung = new Ausschreibung();
+        aMeldung.setOwner(tierbesitzer2);
+        aMeldung.setPetName("Spike");
+        aMeldung.setPetAge(4);
+        aMeldung.setCity("Konstanz");
+        aMeldung.setPostalCode("78462");
+        aMeldung.setAnimalType(AnimalType.DOG);
+        aMeldung.setDescription("Brauche dringend jemanden der auf meinen Hund aufpasst. Bin oft nicht zuhause. Spike beißt manchmal aber das ist ok. Bezahlung nur bar, kein Vertrag, keine Fragen. Wer Probleme macht fliegt raus.");
+        aMeldung.setDateFrom(LocalDate.of(2026, 7, 5));
+        aMeldung.setDateTo(LocalDate.of(2026, 7, 10));
+        aMeldung.setCompensation("Bezahlung");
+        aMeldung.setImageUrl("https://images.unsplash.com/photo-1581674210461-69414705fa38?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+        repository.saveAll(Arrays.asList(a1, a2, a3, a4, a5,a6, aMeldung));
+
+        Meldung m1 = new Meldung();
+m1.setGrund("Unangemessener Inhalt");
+m1.setBeschreibung("Das Profilbild ist völlig unangemessen und das Inserat wirkt sehr unseriös. Kein Vertrag, keine Fragen, Hund beißt – das ist gefährlich für andere Nutzer.");
+m1.setMeldenderUser(tiersucher);
+m1.setGemeldeterUser(tierbesitzer2);
+m1.setCreatedAt(LocalDateTime.now());
+meldungRepository.save(m1);
 
         // ── ABGESCHLOSSENE Ausschreibung mit Reviews ────────────────
 
