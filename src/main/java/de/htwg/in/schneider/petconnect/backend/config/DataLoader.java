@@ -110,7 +110,7 @@ public class DataLoader {
         a1.setDateFrom(LocalDate.of(2026, 8, 1));
         a1.setDateTo(LocalDate.of(2026, 8, 4));
         a1.setCompensation("Tausch");
-        a1.setImageUrl("https://images.unsplash.com/photo-1552053831-71594a27632d");
+        a1.setImageUrl("https://images.unsplash.com/photo-1625556580790-7ce9101965b1?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
 
         Ausschreibung a2 = new Ausschreibung();
         a2.setOwner(tierbesitzer);
@@ -149,7 +149,7 @@ public class DataLoader {
         a4.setDateFrom(LocalDate.of(2026, 8, 5));
         a4.setDateTo(LocalDate.of(2026, 8, 12));
         a4.setCompensation("Bezahlung");
-        a4.setImageUrl("https://images.unsplash.com/photo-1552728089-57bdde30beb3");
+        a4.setImageUrl("https://images.unsplash.com/photo-1648222473707-2c35edc61c27?q=80&w=1078&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
 
         Ausschreibung a5 = new Ausschreibung();
         a5.setOwner(tierbesitzer2);
